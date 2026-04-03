@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harikam Süt Ürünleri - 100% Doğal & Katkısız</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { inter: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50:'#FEF2F2',100:'#FEE2E2',200:'#FECACA',300:'#FCA5A5',400:'#F87171',500:'#EF4444',600:'#DC2626',700:'#B91C1C',800:'#991B1B',900:'#7F1D1D' },
+                        wp: { 50:'#ECFDF5',100:'#D1FAE5',500:'#25D366',600:'#128C7E',700:'#075E54' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:#FFFFFF; color:#1F2937; }
+        .no-scrollbar::-webkit-scrollbar { display:none; }
+        .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
+
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        @keyframes slideDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+        @keyframes pulse-ring { 0%{transform:scale(0.8);opacity:1} 100%{transform:scale(2.2);opacity:0} }
+
+        .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
+        .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        .animate-slide-down { animation: slideDown 0.5s ease-out forwards; }
+        .animate-shake { animation: shake 0.5s ease-in-out; }
+        .delay-100 { animation-delay:0.1s; opacity:0; }
+        .delay-200 { animation-delay:0.2s; opacity:0; }
+        .delay-300 { animation-delay:0.3s; opacity:0; }
+        .delay-400 { animation-delay:0.4s; opacity:0; }
+        .delay-500 { animation-delay:0.5s; opacity:0; }
+
+        .hero-overlay { background: linear-gradient(135deg, rgba(127,29,29,0.78) 0%, rgba(185,28,28,0.5) 40%, rgba(0,0,0,0.35) 100%); }
+        .card-hover { transition: all 0.4s cubic-bezier(0.4,0,0.2,1); }
+        .card-hover:hover { transform:translateY(-6px); box-shadow:0 20px 40px rgba(220,38,38,0.12); }
+        .btn-primary { background: linear-gradient(135deg, #DC2626, #B91C1C); transition: all 0.3s ease; }
+        .btn-primary:hover { background: linear-gradient(135deg, #EF4444, #DC2626); transform: translateY(-2px); box-shadow: 0 10px 25px rgba(220,38,38,0.35); }
+        .btn-wp { background: linear-gradient(135deg, #25D366, #128C7E); transition: all 0.3s ease; }
+        .btn-wp:hover { background: linear-gradient(135deg, #2BE67A, #25D366); transform: translateY(-2px); box-shadow: 0 10px 25px rgba(37,211,102,0.35); }
+        .nav-blur { backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); }
+        .admin-sidebar-item { transition: all 0.2s ease; }
+        .admin-sidebar-item:hover, .admin-sidebar-item.active { background: #FEF2F2; color: #DC2626; }
+        .video-player { background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2); }
+        .toast { animation: slideDown 0.4s ease-out forwards; }
+        input:focus, textarea:focus, select:focus { outline:none; border-color:#DC2626; box-shadow: 0 0 0 3px rgba(220,38,38,0.1); }
+        .stat-card { background: linear-gradient(135deg, #FEF2F2, #FFFFFF); border: 1px solid #FECACA; }
+        .wp-float-btn { position:fixed; bottom:28px; right:28px; z-index:90; }
+        .wp-float-btn::before { content:''; position:absolute; inset:-4px; border-radius:50%; background:rgba(37,211,102,0.3); animation: pulse-ring 2s ease-out infinite; }
+        .login-bg { background: linear-gradient(135deg, #7F1D1D 0%, #DC2626 50%, #EF4444 100%); }
+        .line-clamp-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    </style>
+</head>
+<body class="font-inter">
+
+<!-- Toast Container -->
+<div id="toastContainer" class="fixed top-4 right-4 z-[9999] flex flex-col gap-2"></div>
+
+<!-- ==================== ANA SAYFA ==================== -->
+<div id="mainSite">
+
+    <!-- NAVBAR -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="#" onclick="goHome()" class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center">
+                        <i data-lucide="milk" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold text-white nav-text-color transition-colors duration-300">Harikam</span>
+                </a>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#anasayfa" class="text-sm font-medium text-white/90 hover:text-white nav-link transition-colors">Ana Sayfa</a>
+                    <a href="#urunler" class="text-sm font-medium text-white/90 hover:text-white nav-link transition-colors">Ürünler</a>
+                    <a href="#hakkimizda" class="text-sm font-medium text-white/90 hover:text-white nav-link transition-colors">Hakkımızda</a>
+                    <a href="#iletisim" class="text-sm font-medium text-white/90 hover:text-white nav-link transition-colors">İletişim</a>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg text-white nav-text-color">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-lg">
+            <div class="px-6 py-4 flex flex-col gap-3">
+                <a href="#anasayfa" class="text-sm font-medium text-gray-700 hover:text-brand-600 py-2">Ana Sayfa</a>
+                <a href="#urunler" class="text-sm font-medium text-gray-700 hover:text-brand-600 py-2">Ürünler</a>
+                <a href="#hakkimizda" class="text-sm font-medium text-gray-700 hover:text-brand-600 py-2">Hakkımızda</a>
+                <a href="#iletisim" class="text-sm font-medium text-gray-700 hover:text-brand-600 py-2">İletişim</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section id="anasayfa" class="relative h-screen min-h-[700px] flex items-center overflow-hidden">
+        <img src="https://z-cdn-media.chatglm.cn/files/789276bd-4ac1-4fd8-b922-c52ada815738.png?auth_key=1875247916-7c8e21faa9f14629bac3d2c84df564a8-0-1479deb15fb692e6201f6c396fca6530" alt="Doğal Çiftlik" class="absolute inset-0 w-full h-full object-cover">
+        <div class="hero-overlay absolute inset-0"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 w-full">
+            <div class="max-w-2xl">
+                <div class="animate-fade-in-up">
+                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 text-white text-xs font-semibold uppercase tracking-wider mb-6">
+                        <i data-lucide="leaf" class="w-3.5 h-3.5"></i> Doğal & Organik
+                    </span>
+                </div>
+                <h1 class="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white leading-[1.05] tracking-tight animate-fade-in-up delay-100">
+                    100% Doğal &<br><span class="text-brand-200">Katkısız Ürünler</span>
+                </h1>
+                <p class="mt-6 text-lg sm:text-xl text-white/80 font-light leading-relaxed max-w-lg animate-fade-in-up delay-200">
+                    Doğanın Tadi Harikam'da Buluşuyor. Çiftlikten sofranıza, hiçbir katkı maddesi olmadan gelen saf ve doğal süt ürünleri.
+                </p>
+                <div class="mt-10 flex flex-col sm:flex-row items-start gap-4 animate-fade-in-up delay-300">
+                    <a href="#urunler" class="btn-primary inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-white font-semibold text-base">
+                        Ürünlerimizi Keşfet <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </a>
+                    <a href="https://wa.me/903741234567" target="_blank" class="btn-wp inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-white font-semibold text-base">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        WhatsApp İletişim
+                    </a>
+                </div>
+                <div class="mt-12 animate-fade-in-up delay-400">
+                    <div class="video-player inline-flex items-center gap-4 px-5 py-3 rounded-2xl cursor-pointer hover:bg-white/25 transition-all" onclick="showToast('Video yakında yayında!','info')">
+                        <button class="w-10 h-10 rounded-full bg-brand-600 flex items-center justify-center hover:bg-brand-500 transition-all hover:scale-110">
+                            <i data-lucide="play" class="w-4 h-4 text-white ml-0.5"></i>
+                        </button>
+                        <div>
+                            <p class="text-white text-sm font-medium">Çiftlik Turu</p>
+                            <p class="text-white/60 text-xs">0:31</p>
+                        </div>
+                        <div class="flex gap-[2px] ml-2">
+                            <div class="w-[3px] h-3 bg-white/40 rounded-full"></div>
+                            <div class="w-[3px] h-5 bg-brand-400 rounded-full"></div>
+                            <div class="w-[3px] h-4 bg-white/40 rounded-full"></div>
+                            <div class="w-[3px] h-6 bg-white/40 rounded-full"></div>
+                            <div class="w-[3px] h-3 bg-white/40 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-fade-in delay-500">
+            <span class="text-white/50 text-xs tracking-widest uppercase">Kaydır</span>
+            <div class="w-6 h-10 rounded-full border-2 border-white/30 flex justify-center pt-2">
+                <div class="w-1.5 h-1.5 rounded-full bg-white/70" style="animation:float 2s ease-in-out infinite;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="relative -mt-1 z-20">
+        <div class="max-w-6xl mx-auto px-6 lg:px-8">
+            <div class="bg-white rounded-3xl shadow-xl shadow-brand-100/50 border border-gray-100 p-8 grid grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="text-center"><p class="text-3xl font-bold text-brand-600">25+</p><p class="text-sm text-gray-500 mt-1">Yıllık Tecrübe</p></div>
+                <div class="text-center"><p class="text-3xl font-bold text-brand-600">500+</p><p class="text-sm text-gray-500 mt-1">Çiftlik Partneri</p></div>
+                <div class="text-center"><p class="text-3xl font-bold text-brand-600">50K+</p><p class="text-sm text-gray-500 mt-1">Mutlu Müşteri</p></div>
+                <div class="text-center"><p class="text-3xl font-bold text-brand-600">100%</p><p class="text-sm text-gray-500 mt-1">Doğal Ürün</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ÜRÜNLER -->
+    <section id="urunler" class="py-24 bg-gray-50/50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 text-brand-600 text-xs font-semibold uppercase tracking-wider mb-4">
+                    <i data-lucide="package" class="w-3.5 h-3.5"></i> Ürünlerimiz
+                </span>
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight">Doğanın En İyileri</h2>
+                <p class="mt-4 text-gray-500 text-lg font-light">Her biri özenle üretilen, doğallığından ödün vermeyen süt ürünleri</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-3 mb-12" id="categoryFilter">
+                <button onclick="filterProducts('all')" class="filter-btn active px-5 py-2.5 rounded-xl text-sm font-medium transition-all" data-cat="all">Tümü</button>
+                <button onclick="filterProducts('yogurt')" class="filter-btn px-5 py-2.5 rounded-xl text-sm font-medium transition-all" data-cat="yogurt">Yoğurt</button>
+                <button onclick="filterProducts('sut')" class="filter-btn px-5 py-2.5 rounded-xl text-sm font-medium transition-all" data-cat="sut">Süt</button>
+                <button onclick="filterProducts('peynir')" class="filter-btn px-5 py-2.5 rounded-xl text-sm font-medium transition-all" data-cat="peynir">Peynir</button>
+                <button onclick="filterProducts('tereyag')" class="filter-btn px-5 py-2.5 rounded-xl text-sm font-medium transition-all" data-cat="tereyag">Tereyağı</button>
+                <button onclick="filterProducts('kaymak')" class="filter-btn px-5 py-2.5 rounded-xl text-sm font-medium transition-all" data-cat="kaymak">Kaymak</button>
+            </div>
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+        </div>
+    </section>
+
+    <!-- ÖZELLİKLER -->
+    <section class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 text-brand-600 text-xs font-semibold uppercase tracking-wider mb-4">
+                        <i data-lucide="award" class="w-3.5 h-3.5"></i> Neden Biz?
+                    </span>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">Farkımız Ne?</h2>
+                    <p class="mt-4 text-gray-500 text-lg font-light leading-relaxed">Her ürümüz, doğanın kalbinden gelen saf malzemelerle, geleneksel yöntemlerle üretilir.</p>
+                    <div class="mt-10 space-y-6">
+                        <div class="flex gap-4"><div class="w-12 h-12 rounded-2xl bg-brand-50 flex items-center justify-center flex-shrink-0"><i data-lucide="leaf" class="w-6 h-6 text-brand-600"></i></div><div><h3 class="font-semibold text-gray-900">Tamamen Doğal</h3><p class="text-sm text-gray-500 mt-1">Hiçbir katkı maddesi, koruyucu veya renklendirici kullanılmaz.</p></div></div>
+                        <div class="flex gap-4"><div class="w-12 h-12 rounded-2xl bg-brand-50 flex items-center justify-center flex-shrink-0"><i data-lucide="thermometer" class="w-6 h-6 text-brand-600"></i></div><div><h3 class="font-semibold text-gray-900">Soğuk Zincir</h3><p class="text-sm text-gray-500 mt-1">Üretimden tüketiciye kadar kesintisiz soğuk zincir garantisi.</p></div></div>
+                        <div class="flex gap-4"><div class="w-12 h-12 rounded-2xl bg-brand-50 flex items-center justify-center flex-shrink-0"><i data-lucide="truck" class="w-6 h-6 text-brand-600"></i></div><div><h3 class="font-semibold text-gray-900">Same-Day Teslimat</h3><p class="text-sm text-gray-500 mt-1">Siparişiniz aynı gün, taze olarak kapınızda.</p></div></div>
+                        <div class="flex gap-4"><div class="w-12 h-12 rounded-2xl bg-brand-50 flex items-center justify-center flex-shrink-0"><i data-lucide="heart" class="w-6 h-6 text-brand-600"></i></div><div><h3 class="font-semibold text-gray-900">Sağlıklı Yaşam</h3><p class="text-sm text-gray-500 mt-1">Probiyotik destekli, bağışıklık sisteminize dost ürünler.</p></div></div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="rounded-3xl overflow-hidden shadow-2xl shadow-brand-100/40">
+                        <img src="https://picsum.photos/seed/dairy-farm-nature2/700/800" alt="Doğal Üretim" class="w-full h-[500px] lg:h-[600px] object-cover">
+                    </div>
+                    <div class="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-xl p-5 border border-gray-100" style="animation:float 4s ease-in-out infinite;">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center"><i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i></div>
+                            <div><p class="font-bold text-gray-900">ISO 22000</p><p class="text-xs text-gray-500">Gıda Güvenliği Sertifikalı</p></div>
+                        </div>
+                    </div>
+                    <div class="absolute -top-4 -right-4 bg-brand-600 rounded-2xl shadow-xl p-4 text-white" style="animation:float 5s ease-in-out infinite;animation-delay:1s;">
+                        <div class="text-center"><p class="text-2xl font-bold">4.9</p>
+                            <div class="flex gap-0.5 justify-center mt-1"><i data-lucide="star" class="w-3.5 h-3.5 fill-yellow-300 text-yellow-300"></i><i data-lucide="star" class="w-3.5 h-3.5 fill-yellow-300 text-yellow-300"></i><i data-lucide="star" class="w-3.5 h-3.5 fill-yellow-300 text-yellow-300"></i><i data-lucide="star" class="w-3.5 h-3.5 fill-yellow-300 text-yellow-300"></i><i data-lucide="star" class="w-3.5 h-3.5 fill-yellow-300 text-yellow-300"></i></div>
+                            <p class="text-xs text-white/70 mt-1">2.4K Değerlendirme</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HAKKIMIZDA -->
+    <section id="hakkimizda" class="py-24 bg-gray-50/50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 text-brand-600 text-xs font-semibold uppercase tracking-wider mb-4"><i data-lucide="users" class="w-3.5 h-3.5"></i> Hakkımızda</span>
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight">Hikayemiz</h2>
+                <p class="mt-4 text-gray-500 text-lg font-light leading-relaxed">25 yıldır doğallıktan ödün vermeden, geleneksel yöntemlerle süt ürünleri üretiyoruz.</p>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-3xl p-8 border border-gray-100 card-hover text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-50 flex items-center justify-center mx-auto mb-5"><i data-lucide="sunrise" class="w-8 h-8 text-brand-600"></i></div>
+                    <h3 class="font-bold text-gray-900 text-lg">Sabah Sağımı</h3>
+                    <p class="text-sm text-gray-500 mt-3 leading-relaxed">Her sabah gün doğumundan hemen sonra, taze olarak sağılan sütlerimizi işliyoruz.</p>
+                </div>
+                <div class="bg-white rounded-3xl p-8 border border-gray-100 card-hover text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-50 flex items-center justify-center mx-auto mb-5"><i data-lucide="flask-conical" class="w-8 h-8 text-brand-600"></i></div>
+                    <h3 class="font-bold text-gray-900 text-lg">Laboratuvar Testi</h3>
+                    <p class="text-sm text-gray-500 mt-3 leading-relaxed">Her parti, modern laboratuvarlarımızda kalite kontrolünden geçirilir.</p>
+                </div>
+                <div class="bg-white rounded-3xl p-8 border border-gray-100 card-hover text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-50 flex items-center justify-center mx-auto mb-5"><i data-lucide="refrigerator" class="w-8 h-8 text-brand-600"></i></div>
+                    <h3 class="font-bold text-gray-900 text-lg">Soğuk Zincir</h3>
+                    <p class="text-sm text-gray-500 mt-3 leading-relaxed">+4°C'de saklanan ürünlerimiz, soğuk zincir kırılmadan size ulaşır.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- İLETİŞİM -->
+    <section id="iletisim" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-16">
+                <div>
+                    <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 text-brand-600 text-xs font-semibold uppercase tracking-wider mb-4"><i data-lucide="phone" class="w-3.5 h-3.5"></i> İletişim</span>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">Bize Ulaşın</h2>
+                    <p class="mt-4 text-gray-500 text-lg font-light">Sorularınız veya siparişleriniz için bize ulaşabilirsiniz.</p>
+                    <div class="mt-10 space-y-6">
+                        <div class="flex items-center gap-4"><div class="w-12 h-12 rounded-2xl bg-brand-50 flex items-center justify-center flex-shrink-0"><i data-lucide="map-pin" class="w-6 h-6 text-brand-600"></i></div><div><p class="font-semibold text-gray-900">Adres</p><p class="text-sm text-gray-500">Merkez Mah. Çiftlik Yolu No:42, Bolu, Türkiye</p></div></div>
+                        <div class="flex items-center gap-4"><div class="w-12 h-12 rounded-2xl bg-brand-50 flex items-center justify-center flex-shrink-0"><i data-lucide="phone" class="w-6 h-6 text-brand-600"></i></div><div><p class="font-semibold text-gray-900">Telefon</p><p class="text-sm text-gray-500">+90 374 123 45 67</p></div></div>
+                        <div class="flex items-center gap-4"><div class="w-12 h-12 rounded-2xl bg-wp-50 flex items-center justify-center flex-shrink-0"><svg class="w-6 h-6 text-wp-500" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></div><div><p class="font-semibold text-gray-900">WhatsApp</p><p class="text-sm text-gray-500">+90 374 123 45 67</p></div></div>
+                        <div class="flex items-center gap-4"><div class="w-12 h-12 rounded-2xl bg-brand-50 flex items-center justify-center flex-shrink-0"><i data-lucide="clock" class="w-6 h-6 text-brand-600"></i></div><div><p class="font-semibold text-gray-900">Çalışma Saatleri</p><p class="text-sm text-gray-500">Pazartesi - Cumartesi: 07:00 - 20:00</p></div></div>
+                    </div>
+                    <a href="https://wa.me/903741234567" target="_blank" class="btn-wp inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-semibold text-base mt-8">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        WhatsApp'tan Yazın
+                    </a>
+                </div>
+                <div class="bg-gray-50 rounded-3xl p-8 lg:p-10 border border-gray-100">
+                    <form onsubmit="submitContact(event)">
+                        <div class="grid sm:grid-cols-2 gap-5 mb-5">
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Ad Soyad</label><input type="text" required class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm transition-all" placeholder="Adınız Soyadınız"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Telefon</label><input type="tel" required class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm transition-all" placeholder="05XX XXX XX XX"></div>
+                        </div>
+                        <div class="mb-5"><label class="block text-sm font-medium text-gray-700 mb-2">E-posta</label><input type="email" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm transition-all" placeholder="ornek@email.com"></div>
+                        <div class="mb-5"><label class="block text-sm font-medium text-gray-700 mb-2">Konu</label><select class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm transition-all text-gray-700"><option>Bilgi Talebi</option><option>Sipariş</option><option>Şikayet</option><option>Diğer</option></select></div>
+                        <div class="mb-6"><label class="block text-sm font-medium text-gray-700 mb-2">Mesajınız</label><textarea rows="4" required class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm transition-all resize-none" placeholder="Mesajınızı yazın..."></textarea></div>
+                        <button type="submit" class="btn-primary w-full py-3.5 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2"><i data-lucide="send" class="w-4 h-4"></i> Gönder</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+                <div>
+                    <div class="flex items-center gap-3 mb-5"><div class="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center"><i data-lucide="milk" class="w-6 h-6 text-white"></i></div><span class="text-xl font-bold">Harikam</span></div>
+                    <p class="text-gray-400 text-sm leading-relaxed">Doğanın tadı, sofranızda. 25 yıldır güvenle üretilen doğal süt ürünleri.</p>
+                    <div class="flex gap-3 mt-5">
+                        <a href="#" class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-brand-600 transition-all"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-brand-600 transition-all"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-brand-600 transition-all"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Hızlı Erişim</h4>
+                    <ul class="space-y-2.5 text-sm text-gray-400">
+                        <li><a href="#anasayfa" class="hover:text-white transition-colors">Ana Sayfa</a></li>
+                        <li><a href="#urunler" class="hover:text-white transition-colors">Ürünler</a></li>
+                        <li><a href="#hakkimizda" class="hover:text-white transition-colors">Hakkımızda</a></li>
+                        <li><a href="#iletisim" class="hover:text-white transition-colors">İletişim</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Ürünler</h4>
+                    <ul class="space-y-2.5 text-sm text-gray-400">
+                        <li><a href="#urunler" class="hover:text-white transition-colors">Yoğurt</a></li>
+                        <li><a href="#urunler" class="hover:text-white transition-colors">Süt</a></li>
+                        <li><a href="#urunler" class="hover:text-white transition-colors">Peynir</a></li>
+                        <li><a href="#urunler" class="hover:text-white transition-colors">Tereyağı & Kaymak</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Bülten</h4>
+                    <p class="text-sm text-gray-400 mb-4">Kampanya ve yeni ürünlerden haberdar olun.</p>
+                    <form onsubmit="event.preventDefault();showToast('Bültene kaydınız alınmıştır!','success')" class="flex gap-2">
+                        <input type="email" placeholder="E-posta adresiniz" class="flex-1 px-4 py-2.5 rounded-xl bg-white/10 border border-white/10 text-sm text-white placeholder-gray-500 focus:border-brand-500 focus:ring-0 transition-all">
+                        <button class="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 transition-all"><i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="border-t border-white/10 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-gray-500">© 2026 Harikam Süt Ürünleri. Tüm hakları saklıdır.</p>
+                <div class="flex gap-6 text-sm text-gray-500">
+                    <a href="#" class="hover:text-white transition-colors">Gizlilik Politikası</a>
+                    <a href="#" class="hover:text-white transition-colors">Kullanım Şartları</a>
+                    <a href="#" onclick="event.preventDefault();showLoginPage()" class="hover:text-white transition-colors">Admin Girişi</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<!-- WHATSAPP FLOATING BUTTON -->
+<a href="https://wa.me/903741234567?text=Merhaba%2C%20bilgi%20almak%20istiyorum." target="_blank" class="wp-float-btn w-16 h-16 rounded-full btn-wp flex items-center justify-center shadow-2xl">
+    <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+
+<!-- ==================== ADMIN GİRİŞ SAYFASI ==================== -->
+<div id="loginPage" class="hidden fixed inset-0 z-[100]">
+    <div class="login-bg min-h-screen flex items-center justify-center p-6">
+        <div class="w-full max-w-md animate-fade-in-up">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mx-auto mb-4 border border-white/20">
+                    <i data-lucide="shield-check" class="w-8 h-8 text-white"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-white">Admin Girişi</h1>
+                <p class="text-white/60 mt-2 text-sm">Harikam Yönetim Paneli</p>
+            </div>
+            <div class="bg-white rounded-3xl shadow-2xl p-8">
+                <form onsubmit="adminLogin(event)" id="loginForm">
+                    <div id="loginError" class="hidden mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm flex items-center gap-2 animate-shake">
+                        <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i>
+                        <span>Kullanıcı adı veya şifre hatalı!</span>
+                    </div>
+                    <div class="mb-5">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kullanıcı Adı</label>
+                        <div class="relative">
+                            <i data-lucide="user" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                            <input type="text" id="loginUser" required class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm transition-all" placeholder="Kullanıcı adınız" autocomplete="username">
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Şifre</label>
+                        <div class="relative">
+                            <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                            <input type="password" id="loginPass" required class="w-full pl-11 pr-12 py-3 rounded-xl border border-gray-200 bg-white text-sm transition-all" placeholder="Şifreniz" autocomplete="current-password">
+                            <button type="button" onclick="togglePassVis()" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                                <i data-lucide="eye" id="eyeIcon" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary w-full py-3.5 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2">
+                        <i data-lucide="log-in" class="w-4 h-4"></i> Giriş Yap
+                    </button>
+                </form>
+                <div class="mt-6 text-center">
+                    <button onclick="goHome()" class="text-sm text-gray-500 hover:text-brand-600 transition-colors flex items-center gap-1 mx-auto">
+                        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Siteye Dön
+                    </button>
+                </div>
+                <div class="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <p class="text-xs text-gray-400 text-center">Demo Bilgiler</p>
+                    <p class="text-xs text-gray-500 text-center mt-1"><span class="font-mono bg-white px-2 py-0.5 rounded border border-gray-200">admin</span> / <span class="font-mono bg-white px-2 py-0.5 rounded border border-gray-200">harikam2026</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ==================== ADMIN PANELİ ==================== -->
+<div id="adminPanel" class="hidden fixed inset-0 z-[100] bg-gray-100">
+    <div class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center"><i data-lucide="milk" class="w-4 h-4 text-white"></i></div>
+            <span class="font-bold text-gray-900">Harikam</span>
+            <span class="px-2 py-0.5 rounded-md bg-brand-50 text-brand-600 text-xs font-semibold">Admin</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="hidden sm:flex items-center gap-2 text-sm text-gray-500">
+                <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white font-bold text-xs">AY</div>
+                <span class="font-medium text-gray-700">Ahmet Yılmaz</span>
+            </div>
+            <button onclick="adminLogout()" class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-gray-600 hover:text-red-600 hover:bg-red-50 transition-all">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">Çıkış Yap</span>
+            </button>
+        </div>
+    </div>
+    <div class="flex h-[calc(100vh-64px)]">
+        <div class="w-64 bg-white border-r border-gray-200 p-4 hidden md:block">
+            <nav class="space-y-1">
+                <button onclick="showAdminTab('dashboard')" class="admin-sidebar-item active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700" data-tab="dashboard"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> Gösterge Paneli</button>
+                <button onclick="showAdminTab('products')" class="admin-sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700" data-tab="products"><i data-lucide="package" class="w-5 h-5"></i> Ürünler</button>
+                <button onclick="showAdminTab('orders')" class="admin-sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700" data-tab="orders"><i data-lucide="shopping-cart" class="w-5 h-5"></i> Siparişler</button>
+                <button onclick="showAdminTab('messages')" class="admin-sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700" data-tab="messages"><i data-lucide="message-square" class="w-5 h-5"></i> Mesajlar <span class="ml-auto w-5 h-5 rounded-full bg-brand-600 text-white text-xs flex items-center justify-center">3</span></button>
+                <button onclick="showAdminTab('settings')" class="admin-sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700" data-tab="settings"><i data-lucide="settings" class="w-5 h-5"></i> Ayarlar</button>
+            </nav>
+        </div>
+        <!-- Mobile Tab Bar -->
+        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex z-50">
+            <button onclick="showAdminTab('dashboard')" class="flex-1 flex flex-col items-center py-3 text-brand-600 admin-mobile-tab" data-tab="dashboard"><i data-lucide="layout-dashboard" class="w-5 h-5"></i><span class="text-[10px] mt-1">Panel</span></button>
+            <button onclick="showAdminTab('products')" class="flex-1 flex flex-col items-center py-3 text-gray-400 admin-mobile-tab" data-tab="products"><i data-lucide="package" class="w-5 h-5"></i><span class="text-[10px] mt-1">Ürünler</span></button>
+            <button onclick="showAdminTab('orders')" class="flex-1 flex flex-col items-center py-3 text-gray-400 admin-mobile-tab" data-tab="orders"><i data-lucide="shopping-cart" class="w-5 h-5"></i><span class="text-[10px] mt-1">Sipariş</span></button>
+            <button onclick="showAdminTab('messages')" class="flex-1 flex flex-col items-center py-3 text-gray-400 admin-mobile-tab" data-tab="messages"><i data-lucide="message-square" class="w-5 h-5"></i><span class="text-[10px] mt-1">Mesaj</span></button>
+        </div>
+        <!-- Content -->
+        <div class="flex-1 overflow-y-auto p-6 lg:p-8 pb-24 md:pb-8 no-scrollbar">
+
+            <!-- DASHBOARD -->
+            <div id="tab-dashboard" class="admin-tab">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Gösterge Paneli</h2>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                    <div class="stat-card rounded-2xl p-5"><div class="flex items-center justify-between mb-3"><div class="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center"><i data-lucide="package" class="w-5 h-5 text-brand-600"></i></div><span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-lg">+12%</span></div><p class="text-2xl font-bold text-gray-900" id="statProducts">0</p><p class="text-sm text-gray-500">Toplam Ürün</p></div>
+                    <div class="stat-card rounded-2xl p-5"><div class="flex items-center justify-between mb-3"><div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center"><i data-lucide="shopping-cart" class="w-5 h-5 text-blue-600"></i></div><span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-lg">+8%</span></div><p class="text-2xl font-bold text-gray-900" id="statOrders">0</p><p class="text-sm text-gray-500">Toplam Sipariş</p></div>
+                    <div class="stat-card rounded-2xl p-5"><div class="flex items-center justify-between mb-3"><div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center"><i data-lucide="turkish-lira" class="w-5 h-5 text-green-600"></i></div><span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-lg">+23%</span></div><p class="text-2xl font-bold text-gray-900">₺42.5K</p><p class="text-sm text-gray-500">Bu Ay Gelir</p></div>
+                    <div class="stat-card rounded-2xl p-5"><div class="flex items-center justify-between mb-3"><div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center"><i data-lucide="users" class="w-5 h-5 text-purple-600"></i></div><span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-lg">+15%</span></div><p class="text-2xl font-bold text-gray-900">1,247</p><p class="text-sm text-gray-500">Aktif Müşteri</p></div>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                    <div class="p-5 border-b border-gray-100 flex items-center justify-between">
+                        <h3 class="font-semibold text-gray-900">Son Siparişler</h3>
+                        <button onclick="showAdminTab('orders')" class="text-sm text-brand-600 hover:text-brand-700 font-medium">Tümünü Gör</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50"><tr><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Sipariş No</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Müşteri</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Tutar</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Durum</th></tr></thead>
+                            <tbody id="dashboardOrdersBody" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRODUCTS -->
+            <div id="tab-products" class="admin-tab hidden">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Ürün Yönetimi</h2>
+                    <button onclick="openProductModal()" class="btn-primary flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-medium"><i data-lucide="plus" class="w-4 h-4"></i> Yeni Ürün Ekle</button>
+                </div>
+                <div class="mb-6"><div class="relative max-w-md"><i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i><input type="text" id="adminSearch" oninput="renderAdminProducts()" placeholder="Ürün ara..." class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm transition-all"></div></div>
+                <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50"><tr><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ürün</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Kategori</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Fiyat</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Stok</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Durum</th><th class="text-right py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">İşlem</th></tr></thead>
+                            <tbody id="adminProductsBody" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ORDERS -->
+            <div id="tab-orders" class="admin-tab hidden">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Sipariş Yönetimi</h2>
+                <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50"><tr><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Sipariş No</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Müşteri</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Telefon</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Adres</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ürünler</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Tutar</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Kaynak</th></tr></thead>
+                            <tbody id="ordersBody" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MESSAGES -->
+            <div id="tab-messages" class="admin-tab hidden">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Gelen Mesajlar</h2>
+                <div class="space-y-4">
+                    <div class="bg-white rounded-2xl border border-gray-200 p-5 card-hover"><div class="flex items-start justify-between mb-3"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-sm">EK</div><div><p class="font-semibold text-gray-900">Elif Kaya</p><p class="text-xs text-gray-500">elif@email.com · 2 saat önce</p></div></div><span class="px-2.5 py-1 rounded-lg bg-brand-50 text-brand-600 text-xs font-medium">Yeni</span></div><p class="text-sm text-gray-600 leading-relaxed">Merhaba, organik süte yeni başladık. Haftalık 10 litre sipariş vermek istiyoruz.</p><div class="flex gap-2 mt-4"><button onclick="showToast('Yanıtlama sayfası açıldı','info')" class="px-4 py-2 rounded-lg bg-brand-50 text-brand-600 text-xs font-medium hover:bg-brand-100 transition-all">Yanıtla</button><button onclick="showToast('Mesaj arşivlendi','success')" class="px-4 py-2 rounded-lg bg-gray-50 text-gray-600 text-xs font-medium hover:bg-gray-100 transition-all">Arşivle</button></div></div>
+                    <div class="bg-white rounded-2xl border border-gray-200 p-5 card-hover"><div class="flex items-start justify-between mb-3"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm">MD</div><div><p class="font-semibold text-gray-900">Mehmet Demir</p><p class="text-xs text-gray-500">mehmet@email.com · 5 saat önce</p></div></div><span class="px-2.5 py-1 rounded-lg bg-brand-50 text-brand-600 text-xs font-medium">Yeni</span></div><p class="text-sm text-gray-600 leading-relaxed">Beyaz peynir stoklarınız ne zaman gelecek? Geçen hafta sipariş vermiştim ancak hala gelmedi.</p><div class="flex gap-2 mt-4"><button onclick="showToast('Yanıtlama sayfası açıldı','info')" class="px-4 py-2 rounded-lg bg-brand-50 text-brand-600 text-xs font-medium hover:bg-brand-100 transition-all">Yanıtla</button><button onclick="showToast('Mesaj arşivlendi','success')" class="px-4 py-2 rounded-lg bg-gray-50 text-gray-600 text-xs font-medium hover:bg-gray-100 transition-all">Arşivle</button></div></div>
+                    <div class="bg-white rounded-2xl border border-gray-200 p-5 card-hover"><div class="flex items-start justify-between mb-3"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-sm">AÇ</div><div><p class="font-semibold text-gray-900">Ayşe Çelik</p><p class="text-xs text-gray-500">ayse@email.com · 1 gün önce</p></div></div><span class="px-2.5 py-1 rounded-lg bg-brand-50 text-brand-600 text-xs font-medium">Yeni</span></div><p class="text-sm text-gray-600 leading-relaxed">Toptan fiyatlandırma hakkında bilgi almak istiyorum. Restoranımız için günlük tedarik planlıyoruz.</p><div class="flex gap-2 mt-4"><button onclick="showToast('Yanıtlama sayfası açıldı','info')" class="px-4 py-2 rounded-lg bg-brand-50 text-brand-600 text-xs font-medium hover:bg-brand-100 transition-all">Yanıtla</button><button onclick="showToast('Mesaj arşivlendi','success')" class="px-4 py-2 rounded-lg bg-gray-50 text-gray-600 text-xs font-medium hover:bg-gray-100 transition-all">Arşivle</button></div></div>
+                </div>
+            </div>
+
+            <!-- SETTINGS -->
+            <div id="tab-settings" class="admin-tab hidden">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Site Ayarları</h2>
+                <div class="max-w-2xl space-y-6">
+                    <div class="bg-white rounded-2xl border border-gray-200 p-6">
+                        <h3 class="font-semibold text-gray-900 mb-4">Genel Bilgiler</h3>
+                        <div class="space-y-4">
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Site Adı</label><input type="text" value="Harikam Süt Ürünleri" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">WhatsApp Numarası</label><input type="text" value="+90 374 123 45 67" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">E-posta</label><input type="email" value="info@harikam.com.tr" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Admin Şifre Değiştir</label><input type="password" placeholder="Yeni şifre" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm"></div>
+                        </div>
+                        <button onclick="showToast('Ayarlar kaydedildi!','success')" class="btn-primary mt-6 px-6 py-2.5 rounded-xl text-white text-sm font-medium">Kaydet</button>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-gray-200 p-6">
+                        <h3 class="font-semibold text-gray-900 mb-4">Tehlikeli Bölge</h3>
+                        <p class="text-sm text-gray-500 mb-4">Bu işlemler geri alınamaz.</p>
+                        <button onclick="if(confirm('Tüm ürünleri silmek istediğinize emin misiniz?')){products=[];renderAdminProducts();renderProducts('all');updateStats();showToast('Tüm ürünler silindi','error')}" class="px-4 py-2.5 rounded-xl bg-red-50 text-red-600 text-sm font-medium hover:bg-red-100 transition-all border border-red-200 flex items-center gap-2"><i data-lucide="trash-2" class="w-4 h-4"></i> Tüm Ürünleri Sil</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ==================== SİPARİŞ MODALI ==================== -->
+<div id="orderModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeOrderModal()"></div>
+    <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-slide-down no-scrollbar">
+        <div class="p-6 lg:p-8">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xl font-bold text-gray-900">Sipariş Ver</h3>
+                <button onclick="closeOrderModal()" class="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-all"><i data-lucide="x" class="w-5 h-5 text-gray-500"></i></button>
+            </div>
+            <div id="orderProductInfo" class="mb-5 p-4 bg-brand-50 rounded-2xl border border-brand-100"></div>
+            <form onsubmit="submitOrder(event)">
+                <div class="space-y-4">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Ad Soyad *</label><input type="text" id="oName" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="Adınız Soyadınız"></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Telefon *</label><input type="tel" id="oPhone" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="05XX XXX XX XX"></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">E-posta</label><input type="email" id="oEmail" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="ornek@email.com"></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Teslimat Adresi *</label><textarea id="oAddress" required rows="3" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm resize-none" placeholder="Mahalle, Sokak, Bina No, Daire No, İlçe/İl"></textarea></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Adet</label><input type="number" id="oQty" min="1" value="1" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm"></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Not</label><input type="text" id="oNote" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="Ek notunuz"></div>
+                    </div>
+                </div>
+                <div class="flex gap-3 mt-6">
+                    <button type="button" onclick="closeOrderModal()" class="flex-1 py-3 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-all">İptal</button>
+                    <button type="submit" class="flex-1 btn-wp py-3 rounded-xl text-white text-sm font-medium flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        WhatsApp ile Gönder
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- ==================== ÜRÜN MODALI (Admin) ==================== -->
+<div id="productModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeProductModal()"></div>
+    <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-slide-down no-scrollbar">
+        <div class="p-6 lg:p-8">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-bold text-gray-900" id="modalTitle">Yeni Ürün Ekle</h3>
+                <button onclick="closeProductModal()" class="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-all"><i data-lucide="x" class="w-5 h-5 text-gray-500"></i></button>
+            </div>
+            <form onsubmit="saveProduct(event)">
+                <input type="hidden" id="editProductId" value="">
+                <div class="space-y-4">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Ürün Adı *</label><input type="text" id="pName" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="Örn: Süzme Yoğurt"></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Kategori *</label><select id="pCategory" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700"><option value="yogurt">Yoğurt</option><option value="sut">Süt</option><option value="peynir">Peynir</option><option value="tereyag">Tereyağı</option><option value="kaymak">Kaymak</option></select></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Fiyat (₺) *</label><input type="number" id="pPrice" required step="0.01" min="0" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="0.00"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Stok</label><input type="number" id="pStock" min="0" value="100" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm"></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Birim</label><select id="pUnit" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700"><option value="adet">Adet</option><option value="kg">Kg</option><option value="litre">Litre</option></select></div>
+                    </div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Açıklama</label><textarea id="pDesc" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm resize-none" placeholder="Ürün açıklaması..."></textarea></div>
+                    <div><label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="pActive" checked class="w-5 h-5 rounded-lg border-gray-300 text-brand-600 focus:ring-brand-500"><span class="text-sm text-gray-700">Aktif</span></label></div>
+                </div>
+                <div class="flex gap-3 mt-6">
+                    <button type="button" onclick="closeProductModal()" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-all">İptal</button>
+                    <button type="submit" class="flex-1 btn-primary py-2.5 rounded-xl text-white text-sm font-medium">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- ==================== SİLME ONAY ==================== -->
+<div id="deleteModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
+    <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm animate-slide-down">
+        <div class="p-6 text-center">
+            <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4"><i data-lucide="alert-triangle" class="w-8 h-8 text-red-600"></i></div>
+            <h3 class="text-lg font-bold text-gray-900">Ürünü Sil</h3>
+            <p class="text-sm text-gray-500 mt-2">Bu işlem geri alınamaz.</p>
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeDeleteModal()" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-all">İptal</button>
+                <button onclick="confirmDelete()" class="flex-1 py-2.5 rounded-xl bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition-all">Sil</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+// ==================== VERİ ====================
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'harikam2026';
+const WP_NUMBER = '903741234567';
+
+let products = [
+    { id:1, name:'Süzme Yoğurt', category:'yogurt', price:45, stock:250, unit:'kg', desc:'Geleneksel usul, yağlı süzme yoğurt. Tamamen doğal.', active:true, img:'https://picsum.photos/seed/strained-yogurt-11/400/400' },
+    { id:2, name:'Doğal Yoğurt', category:'yogurt', price:35, stock:400, unit:'kg', desc:'Sade, katkısız doğal yoğurt. Her öğüne uygun.', active:true, img:'https://picsum.photos/seed/natural-yogurt-22/400/400' },
+    { id:3, name:'Meyveli Yoğurt', category:'yogurt', price:55, stock:120, unit:'kg', desc:'Doğal meyve püresi ile hazırlanan probiyotik yoğurt.', active:true, img:'https://picsum.photos/seed/fruit-yogurt-33/400/400' },
+    { id:4, name:'Tam Yağlı Süt', category:'sut', price:25, stock:500, unit:'litre', desc:'Gün doğumundan sağılan, tam yağlı süt.', active:true, img:'https://picsum.photos/seed/whole-milk-44/400/400' },
+    { id:5, name:'Yarım Yağlı Süt', category:'sut', price:22, stock:350, unit:'litre', desc:'Yağ oranı azaltılmış, doğallığı korunan süt.', active:true, img:'https://picsum.photos/seed/semi-milk-55/400/400' },
+    { id:6, name:'Keçi Sütü', category:'sut', price:65, stock:80, unit:'litre', desc:'Organik keçi çiftliğinden gelen besleyici keçi sütü.', active:true, img:'https://picsum.photos/seed/goat-milk-66/400/400' },
+    { id:7, name:'Beyaz Peynir', category:'peynir', price:120, stock:180, unit:'kg', desc:'Tuzlu, yarım yağlı geleneksel beyaz peynir.', active:true, img:'https://picsum.photos/seed/white-cheese-77/400/400' },
+    { id:8, name:'Kaşar Peyniri', category:'peynir', price:180, stock:90, unit:'kg', desc:'Uzun süre dinlendirilmiş doğal kaşar peyniri.', active:true, img:'https://picsum.photos/seed/kashar-88/400/400' },
+    { id:9, name:'Otlu Peynir', category:'peynir', price:200, stock:60, unit:'kg', desc:'Doğal otlarla hazırlanan yöresel otlu peynir.', active:true, img:'https://picsum.photos/seed/herb-cheese-99/400/400' },
+    { id:10, name:'Süzme Tereyağı', category:'tereyag', price:150, stock:100, unit:'kg', desc:'Geleneksel usul süzme tereyağı.', active:true, img:'https://picsum.photos/seed/butter-101/400/400' },
+    { id:11, name:'Tuzlu Tereyağı', category:'tereyag', price:140, stock:110, unit:'kg', desc:'Tuzlanmış doğal tereyağı. Kahvaltıların vazgeçilmezi.', active:true, img:'https://picsum.photos/seed/salt-butter-111/400/400' },
+    { id:12, name:'Manda Kaymağı', category:'kaymak', price:220, stock:45, unit:'kg', desc:'Manda sütünden elde edilen yoğun kaymak.', active:true, img:'https://picsum.photos/seed/buffalo-cream-121/400/400' },
+    { id:13, name:'Süt Kaymağı', category:'kaymak', price:160, stock:75, unit:'kg', desc:'İneğ sütünden doğal olarak oluşan hafif kaymak.', active:true, img:'https://picsum.photos/seed/milk-cream-131/400/400' },
+];
+
+let nextId = 14;
+let deleteTargetId = null;
+let currentFilter = 'all';
+let orderTargetProduct = null;
+
+// Siparişler (localStorage'da tut)
+let orders = JSON.parse(localStorage.getItem('hk_orders') || '[]');
+
+const catLabels = { yogurt:'Yoğurt', sut:'Süt', peynir:'Peynir', tereyağ:'Tereyağı', kaymak:'Kaymak' };
+const catColors = { yogurt:'bg-blue-50 text-blue-600', sut:'bg-green-50 text-green-600', peynir:'bg-yellow-50 text-yellow-700', tereyağ:'bg-orange-50 text-orange-600', kaymak:'bg-purple-50 text-purple-600' };
+
+// ==================== ANA SAYFA ÜRÜNLER ====================
+function renderProducts(cat) {
+    currentFilter = cat;
+    const grid = document.getElementById('productsGrid');
+    const filtered = cat === 'all' ? products.filter(p=>p.active) : products.filter(p=>p.active && p.category===cat);
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+    updateFilterStyles();
+
+    if(!filtered.length) {
+        grid.innerHTML = `<div class="col-span-full text-center py-16"><div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4"><i data-lucide="package-x" class="w-8 h-8 text-gray-400"></i></div><p class="text-gray-500 font-medium">Bu kategoride ürün bulunamadı</p></div>`;
+        lucide.createIcons(); return;
+    }
+    grid.innerHTML = filtered.map((p, i) => `
+        <div class="bg-white rounded-3xl border border-gray-100 overflow-hidden card-hover group" style="animation:fadeInUp 0.5s ease-out ${i*0.08}s forwards;opacity:0;">
+            <div class="relative h-56 overflow-hidden bg-gray-50">
+                <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">
+                <div class="absolute top-3 left-3"><span class="px-3 py-1 rounded-lg ${catColors[p.category]} text-xs font-semibold">${catLabels[p.category]}</span></div>
+            </div>
+            <div class="p-5">
+                <h3 class="font-bold text-gray-900 text-lg">${p.name}</h3>
+                <p class="text-sm text-gray-500 mt-1.5 line-clamp-2 leading-relaxed">${p.desc}</p>
+                <div class="flex items-end justify-between mt-4 pt-4 border-t border-gray-50">
+                    <div><span class="text-xl font-bold text-brand-600">₺${p.price}</span><span class="text-xs text-gray-400 ml-1">/ ${p.unit}</span></div>
+                    <button onclick="openOrderModal(${p.id})" class="px-4 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition-all flex items-center gap-1.5">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i> Sipariş
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    lucide.createIcons();
+}
+
+function updateFilterStyles() {
+    document.querySelectorAll('.filter-btn').forEach(b => {
+        if(b.classList.contains('active')) { b.style.cssText='background:linear-gradient(135deg,#DC2626,#B91C1C);color:#fff;box-shadow:0 4px 15px rgba(220,38,38,0.3);border:none;'; }
+        else { b.style.cssText='background:#fff;color:#6B7280;box-shadow:none;border:1px solid #E5E7EB;'; }
+    });
+}
+function filterProducts(cat) { renderProducts(cat); }
+
+// ==================== SİPARİŞ MODALI ====================
+function openOrderModal(productId) {
+    orderTargetProduct = products.find(p => p.id === productId);
+    if(!orderTargetProduct) return;
+    const p = orderTargetProduct;
+    document.getElementById('orderProductInfo').innerHTML = `
+        <div class="flex items-center gap-4">
+            <img src="${p.img}" class="w-16 h-16 rounded-2xl object-cover" alt="">
+            <div class="flex-1">
+                <h4 class="font-bold text-gray-900">${p.name}</h4>
+                <p class="text-sm text-gray-500">${p.desc}</p>
+                <p class="text-brand-600 font-bold mt-1">₺${p.price} / ${p.unit}</p>
+            </div>
+        </div>`;
+    document.getElementById('oName').value = '';
+    document.getElementById('oPhone').value = '';
+    document.getElementById('oEmail').value = '';
+    document.getElementById('oAddress').value = '';
+    document.getElementById('oQty').value = 1;
+    document.getElementById('oNote').value = '';
+    document.getElementById('orderModal').classList.remove('hidden');
+    lucide.createIcons();
+}
+function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); orderTargetProduct = null; }
+
+function submitOrder(e) {
+    e.preventDefault();
+    const p = orderTargetProduct;
+    if(!p) return;
+    const name = document.getElementById('oName').value.trim();
+    const phone = document.getElementById('oPhone').value.trim();
+    const email = document.getElementById('oEmail').value.trim();
+    const address = document.getElementById('oAddress').value.trim();
+    const qty = parseInt(document.getElementById('oQty').value) || 1;
+    const note = document.getElementById('oNote').value.trim();
+    const total = (p.price * qty).toFixed(2);
+
+    // Siparişi kaydet
+    const order = {
+        id: 'HK-' + (1000 + orders.length + 1),
+        customer: name,
+        phone: phone,
+        email: email,
+        address: address,
+        product: p.name,
+        qty: qty,
+        unit: p.unit,
+        price: p.price,
+        total: total,
+        note: note,
+        source: 'WhatsApp',
+        date: new Date().toLocaleString('tr-TR')
+    };
+    orders.push(order);
+    localStorage.setItem('hk_orders', JSON.stringify(orders));
+
+    // WhatsApp mesajı oluştur
+    let msg = `🛒 *YENİ SİPARİŞ*\n`;
+    msg += `─────────────────\n`;
+    msg += `📦 Ürün: *${p.name}*\n`;
+    msg += `📊 Adet: *${qty} ${p.unit}*\n`;
+    msg += `💰 Tutar: *₺${total}*\n`;
+    msg += `─────────────────\n`;
+    msg += `👤 Ad Soyad: ${name}\n`;
+    msg += `📱 Telefon: ${phone}\n`;
+    if(email) msg += `📧 E-posta: ${email}\n`;
+    msg += `📍 Adres: ${address}\n`;
+    if(note) msg += `📝 Not: ${note}\n`;
+    msg += `─────────────────\n`;
+    msg += `📅 ${order.date}`;
+
+    const wpUrl = `https://wa.me/${WP_NUMBER}?text=${encodeURIComponent(msg)}`;
+
+    closeOrderModal();
+    showToast('Sipariş bilgileri hazırlanıyor...', 'success');
+
+    setTimeout(() => { window.open(wpUrl, '_blank'); }, 500);
+}
+
+// ==================== ADMİN GİRİŞ ====================
+function showLoginPage() {
+    document.getElementById('mainSite').classList.add('hidden');
+    document.getElementById('adminPanel').classList.add('hidden');
+    document.getElementById('loginPage').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('loginUser').value = '';
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginError').classList.add('hidden');
+    lucide.createIcons();
+}
+
+function adminLogin(e) {
+    e.preventDefault();
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value;
+
+    if(user === ADMIN_USER && pass === ADMIN_PASS) {
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('adminPanel').classList.remove('hidden');
+        document.getElementById('loginError').classList.add('hidden');
+        renderAdminProducts();
+        renderAdminOrders();
+        updateStats();
+        showToast('Hoş geldiniz, Ahmet Yılmaz!', 'success');
+        lucide.createIcons();
+    } else {
+        const errEl = document.getElementById('loginError');
+        errEl.classList.remove('hidden');
+        errEl.classList.add('animate-shake');
+        setTimeout(() => errEl.classList.remove('animate-shake'), 500);
+        lucide.createIcons();
+    }
+}
+
+function adminLogout() {
+    document.getElementById('adminPanel').classList.add('hidden');
+    document.getElementById('mainSite').classList.remove('hidden');
+    document.body.style.overflow = '';
+    renderProducts(currentFilter);
+    showToast('Çıkış yapıldı', 'info');
+    lucide.createIcons();
+}
+
+function goHome() {
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('adminPanel').classList.add('hidden');
+    document.getElementById('mainSite').classList.remove('hidden');
+    document.body.style.overflow = '';
+    renderProducts(currentFilter);
+    lucide.createIcons();
+}
+
+function togglePassVis() {
+    const inp = document.getElementById('loginPass');
+    const isPass = inp.type === 'password';
+    inp.type = isPass ? 'text' : 'password';
+}
+
+// ==================== ADMİN ÜRÜNLER ====================
+function renderAdminProducts() {
+    const search = document.getElementById('adminSearch')?.value.toLowerCase() || '';
+    const filtered = products.filter(p => p.name.toLowerCase().includes(search));
+    document.getElementById('adminProductsBody').innerHTML = filtered.map(p => `
+        <tr class="hover:bg-gray-50 transition-colors">
+            <td class="py-3.5 px-5"><div class="flex items-center gap-3"><img src="${p.img}" class="w-10 h-10 rounded-xl object-cover bg-gray-100" alt=""><span class="font-medium text-gray-900">${p.name}</span></div></td>
+            <td class="py-3.5 px-5"><span class="px-2.5 py-1 rounded-lg ${catColors[p.category]} text-xs font-medium">${catLabels[p.category]}</span></td>
+            <td class="py-3.5 px-5 font-medium text-gray-900">₺${p.price}</td>
+            <td class="py-3.5 px-5 text-gray-600">${p.stock}</td>
+            <td class="py-3.5 px-5"><span class="px-2.5 py-1 rounded-lg text-xs font-medium ${p.active?'bg-green-50 text-green-700':'bg-gray-100 text-gray-500'}">${p.active?'Aktif':'Pasif'}</span></td>
+            <td class="py-3.5 px-5 text-right"><div class="flex items-center justify-end gap-1">
+                <button onclick="editProduct(${p.id})" class="w-8 h-8 rounded-lg hover:bg-blue-50 flex items-center justify-center text-gray-400 hover:text-blue-600 transition-all" title="Düzenle"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                <button onclick="deleteProduct(${p.id})" class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center text-gray-400 hover:text-red-600 transition-all" title="Sil"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            </div></td>
+        </tr>`).join('');
+    lucide.createIcons();
+}
+
+function openProductModal(id=null) {
+    const modal = document.getElementById('productModal');
+    const title = document.getElementById('modalTitle');
+    if(id) {
+        const p = products.find(x=>x.id===id); if(!p) return;
+        title.textContent='Ürün Düzenle';
+        document.getElementById('editProductId').value=id;
+        document.getElementById('pName').value=p.name;
+        document.getElementById('pCategory').value=p.category;
+        document.getElementById('pPrice').value=p.price;
+        document.getElementById('pStock').value=p.stock;
+        document.getElementById('pUnit').value=p.unit;
+        document.getElementById('pDesc').value=p.desc;
+        document.getElementById('pActive').checked=p.active;
+    } else {
+        title.textContent='Yeni Ürün Ekle';
+        document.getElementById('editProductId').value='';
+        document.getElementById('pName').value='';
+        document.getElementById('pCategory').value='yogurt';
+        document.getElementById('pPrice').value='';
+        document.getElementById('pStock').value=100;
+        document.getElementById('pUnit').value='adet';
+        document.getElementById('pDesc').value='';
+        document.getElementById('pActive').checked=true;
+    }
+    modal.classList.remove('hidden'); lucide.createIcons();
+}
+function closeProductModal() { document.getElementById('productModal').classList.add('hidden'); }
+
+function saveProduct(e) {
+    e.preventDefault();
+    const editId = document.getElementById('editProductId').value;
+    const data = { name:document.getElementById('pName').value, category:document.getElementById('pCategory').value, price:parseFloat(document.getElementById('pPrice').value), stock:parseInt(document.getElementById('pStock').value)||0, unit:document.getElementById('pUnit').value, desc:document.getElementById('pDesc').value, active:document.getElementById('pActive').checked };
+    if(editId) {
+        const idx=products.findIndex(p=>p.id==editId);
+        if(idx>-1) { products[idx]={...products[idx],...data}; showToast('Ürün güncellendi!','success'); }
+    } else {
+        products.push({id:nextId++,...data,img:`https://picsum.photos/seed/${data.name.toLowerCase().replace(/\s+/g,'-')}-${Date.now()}/400/400`});
+        showToast('Yeni ürün eklendi!','success');
+    }
+    closeProductModal(); renderAdminProducts(); renderProducts(currentFilter); updateStats();
+}
+function editProduct(id) { openProductModal(id); }
+function deleteProduct(id) { deleteTargetId=id; document.getElementById('deleteModal').classList.remove('hidden'); lucide.createIcons(); }
+function closeDeleteModal() { document.getElementById('deleteModal').classList.add('hidden'); deleteTargetId=null; }
+function confirmDelete() { if(deleteTargetId!==null){products=products.filter(p=>p.id!==deleteTargetId);showToast('Ürün silindi','error');renderAdminProducts();renderProducts(currentFilter);updateStats();} closeDeleteModal(); }
+
+// ==================== ADMİN SİPARİŞLER ====================
+function renderAdminOrders() {
+    const tbody = document.getElementById('ordersBody');
+    const dashTbody = document.getElementById('dashboardOrdersBody');
+    const statusHtml = '<span class="px-2.5 py-1 rounded-lg bg-green-50 text-green-700 text-xs font-medium">WhatsApp</span>';
+    const srcHtml = '<span class="px-2.5 py-1 rounded-lg bg-wp-50 text-wp-600 text-xs font-medium flex items-center gap-1"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>WhatsApp</span>';
+
+    const allRows = orders.slice().reverse().map(o => `
+        <tr class="hover:bg-gray-50 transition-colors">
+            <td class="py-3.5 px-5 font-medium text-gray-900">${o.id}</td>
+            <td class="py-3.5 px-5 text-gray-600">${o.customer}</td>
+            <td class="py-3.5 px-5 text-gray-600">${o.phone}</td>
+            <td class="py-3.5 px-5 text-gray-500 text-xs max-w-[200px] truncate">${o.address}</td>
+            <td class="py-3.5 px-5 text-gray-600">${o.product} x${o.qty}</td>
+            <td class="py-3.5 px-5 font-medium text-gray-900">₺${o.total}</td>
+            <td class="py-3.5 px-5">${srcHtml}</td>
+        </tr>`).join('');
+
+    tbody.innerHTML = allRows || '<tr><td colspan="7" class="py-12 text-center text-gray-400">Henüz sipariş yok</td></tr>';
+
+    // Dashboard son 5
+    dashTbody.innerHTML = orders.slice(-5).reverse().map(o => `
+        <tr class="hover:bg-gray-50 transition-colors">
+            <td class="py-3.5 px-5 font-medium text-gray-900">${o.id}</td>
+            <td class="py-3.5 px-5 text-gray-600">${o.customer}</td>
+            <td class="py-3.5 px-5 font-medium text-gray-900">₺${o.total}</td>
+            <td class="py-3.5 px-5">${statusHtml}</td>
+        </tr>`).join('') || '<tr><td colspan="4" class="py-12 text-center text-gray-400">Henüz sipariş yok</td></tr>';
+}
+
+// ==================== ADMIN TAB GEÇİŞ ====================
+function showAdminTab(tab) {
+    document.querySelectorAll('.admin-tab').forEach(t=>t.classList.add('hidden'));
+    document.getElementById('tab-'+tab).classList.remove('hidden');
+    document.querySelectorAll('.admin-sidebar-item').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+    document.querySelectorAll('.admin-mobile-tab').forEach(b=>{const a=b.dataset.tab===tab;b.classList.toggle('text-brand-600',a);b.classList.toggle('text-gray-400',!a);});
+    if(tab==='products') renderAdminProducts();
+    if(tab==='orders') renderAdminOrders();
+    if(tab==='dashboard') { updateStats(); renderAdminOrders(); }
+    lucide.createIcons();
+}
+
+function updateStats() {
+    const el1=document.getElementById('statProducts'); if(el1) el1.textContent=products.length;
+    const el2=document.getElementById('statOrders'); if(el2) el2.textContent=orders.length;
+}
+
+// ==================== NAVBAR SCROLL ====================
+window.addEventListener('scroll', () => {
+    const nav = document.getElementById('navbar');
+    if(window.scrollY > 80) {
+        nav.style.background='rgba(255,255,255,0.95)'; nav.classList.add('nav-blur','shadow-sm');
+        nav.querySelectorAll('.nav-link').forEach(l=>{l.style.color='#6B7280';l.onmouseenter=()=>l.style.color='#DC2626';l.onmouseleave=()=>l.style.color='#6B7280';});
+        nav.querySelectorAll('.nav-text-color').forEach(l=>l.style.color='#1F2937');
+        const logo=nav.querySelector('a span'); if(logo) logo.style.color='#1F2937';
+    } else {
+        nav.style.background='transparent'; nav.classList.remove('nav-blur','shadow-sm');
+        nav.querySelectorAll('.nav-link').forEach(l=>{l.style.color='rgba(255,255,255,0.9)';l.onmouseenter=()=>l.style.color='#fff';l.onmouseleave=()=>l.style.color='rgba(255,255,255,0.9)';});
+        nav.querySelectorAll('.nav-text-color').forEach(l=>l.style.color='#fff');
+        const logo=nav.querySelector('a span'); if(logo) logo.style.color='#fff';
+    }
+});
+
+// ==================== MOBİL MENÜ ====================
+function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('hidden'); }
+
+// ==================== TOAST ====================
+function showToast(message, type='info') {
+    const c=document.getElementById('toastContainer');
+    const colors={success:'bg-green-600',error:'bg-red-600',info:'bg-blue-600',warning:'bg-yellow-500'};
+    const icons={success:'check-circle',error:'x-circle',info:'info',warning:'alert-triangle'};
+    const t=document.createElement('div');
+    t.className=`toast flex items-center gap-3 px-5 py-3.5 rounded-2xl ${colors[type]} text-white shadow-xl text-sm font-medium min-w-[280px]`;
+    t.innerHTML=`<i data-lucide="${icons[type]}" class="w-5 h-5 flex-shrink-0"></i><span>${message}</span>`;
+    c.appendChild(t); lucide.createIcons();
+    setTimeout(()=>{t.style.transition='all 0.3s ease';t.style.opacity='0';t.style.transform='translateX(100px)';setTimeout(()=>t.remove(),300);},3000);
+}
+
+// ==================== İLETİŞİM ====================
+function submitContact(e) { e.preventDefault(); showToast('Mesajınız başarıyla gönderildi!','success'); e.target.reset(); }
+
+// ==================== SMOOTH SCROLL ====================
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t){t.scrollIntoView({behavior:'smooth',block:'start'});document.getElementById('mobileMenu').classList.add('hidden');}});
+});
+
+// ==================== İNİT ====================
+document.addEventListener('DOMContentLoaded',()=>{
+    renderProducts('all');
+    updateFilterStyles();
+    lucide.createIcons();
+});
+</script>
+</body>
+</html>
