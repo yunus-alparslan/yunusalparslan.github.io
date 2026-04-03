@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXE MOTORS | Premium Oto Galeri</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, .brand-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c0a062;
+            border-radius: 4px;
+        }
+        
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #c0a062 0%, #f0d78c 50%, #c0a062 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Gold Accent */
+        .gold-accent {
+            color: #c0a062;
+        }
+        
+        .gold-bg {
+            background: linear-gradient(135deg, #c0a062 0%, #f0d78c 100%);
+        }
+        
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-strong {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(192, 160, 98, 0.3);
+        }
+        
+        /* Hero Canvas */
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        /* Car Card Hover */
+        .car-card {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        
+        .car-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(192, 160, 98, 0.3);
+        }
+        
+        .car-card:hover .car-image {
+            transform: scale(1.1);
+        }
+        
+        .car-image {
+            transition: transform 0.6s ease;
+        }
+        
+        /* Magnetic Button */
+        .magnetic-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .magnetic-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(192, 160, 98, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .magnetic-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        /* Loader */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+        
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loader-circle {
+            width: 80px;
+            height: 80px;
+            border: 3px solid rgba(192, 160, 98, 0.3);
+            border-top-color: #c0a062;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Text Reveal */
+        .reveal-text {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+        }
+        
+        /* Parallax */
+        .parallax-layer {
+            will-change: transform;
+        }
+        
+        /* Custom Cursor */
+        .custom-cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #c0a062;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.2s, opacity 0.2s;
+            mix-blend-mode: difference;
+        }
+        
+        .cursor-dot {
+            width: 4px;
+            height: 4px;
+            background: #c0a062;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        
+        /* Specs Counter */
+        .counter-value {
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* Configurator */
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .color-option.active {
+            border-color: #fff;
+            transform: scale(1.2);
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Navigation Link Effect */
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #c0a062, transparent);
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+        }
+        
+        .nav-link:hover::after {
+            transform: translateX(0);
+        }
+        
+        /* 360 Viewer Simulation */
+        .viewer-360 {
+            cursor: grab;
+            user-select: none;
+        }
+        
+        .viewer-360:active {
+            cursor: grabbing;
+        }
+        
+        /* Chat Widget */
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+        
+        .chat-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #c0a062 0%, #f0d78c 100%);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(192, 160, 98, 0.4);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chat-btn:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+        
+        /* Filter Chips */
+        .filter-chip {
+            transition: all 0.3s;
+            border: 1px solid rgba(192, 160, 98, 0.3);
+        }
+        
+        .filter-chip.active {
+            background: rgba(192, 160, 98, 0.2);
+            border-color: #c0a062;
+            color: #c0a062;
+        }
+        
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .custom-cursor, .cursor-dot {
+                display: none;
+            }
+        }
+        
+        /* Particle Background */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(192, 160, 98, 0.5);
+            border-radius: 50%;
+            animation: float 20s infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        /* Testimonial Card */
+        .testimonial-card {
+            background: linear-gradient(135deg, rgba(192, 160, 98, 0.1) 0%, rgba(10, 10, 10, 0.8) 100%);
+            border: 1px solid rgba(192, 160, 98, 0.2);
+        }
+        
+        /* Video Background Overlay */
+        .video-overlay {
+            background: linear-gradient(to bottom, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.8) 100%);
+        }
+        
+        /* Inventory Grid Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="flex flex-col items-center gap-4">
+            <div class="loader-circle"></div>
+            <p class="brand-font text-gold-accent tracking-widest text-sm">LUXE MOTORS</p>
+        </div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="cursor"></div>
+    <div class="cursor-dot" id="cursor-dot"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-strong transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="#" class="brand-font text-2xl font-bold gradient-text tracking-wider">
+                    LUXE MOTORS
+                </a>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#anasayfa" class="nav-link text-sm uppercase tracking-widest hover:text-yellow-500 transition-colors">Ana Sayfa</a>
+                    <a href="#araclar" class="nav-link text-sm uppercase tracking-widest hover:text-yellow-500 transition-colors">Araçlar</a>
+                    <a href="#sanal-showroom" class="nav-link text-sm uppercase tracking-widest hover:text-yellow-500 transition-colors">Sanal Showroom</a>
+                    <a href="#hakkimizda" class="nav-link text-sm uppercase tracking-widest hover:text-yellow-500 transition-colors">Hakkımızda</a>
+                    <a href="#iletisim" class="nav-link text-sm uppercase tracking-widest hover:text-yellow-500 transition-colors">İletişim</a>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <button class="magnetic-btn px-6 py-2 border border-yellow-600 text-yellow-500 rounded-full hover:bg-yellow-600 hover:text-black transition-all text-sm uppercase tracking-wider" onclick="openConfigurator()">
+                        Konfigürasyon
+                    </button>
+                    <button class="md:hidden text-white" onclick="toggleMobileMenu()">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="md:hidden hidden bg-black/95 backdrop-blur-xl" id="mobile-menu">
+            <div class="px-6 py-4 space-y-4">
+                <a href="#anasayfa" class="block text-lg hover:text-yellow-500">Ana Sayfa</a>
+                <a href="#araclar" class="block text-lg hover:text-yellow-500">Araçlar</a>
+                <a href="#sanal-showroom" class="block text-lg hover:text-yellow-500">Sanal Showroom</a>
+                <a href="#hakkimizda" class="block text-lg hover:text-yellow-500">Hakkımızda</a>
+                <a href="#iletisim" class="block text-lg hover:text-yellow-500">İletişim</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="anasayfa" class="relative h-screen flex items-center justify-center overflow-hidden">
+        <canvas id="hero-canvas"></canvas>
+        
+        <!-- Particles -->
+        <div class="particles" id="particles"></div>
+        
+        <div class="relative z-10 text-center px-6 max-w-6xl mx-auto">
+            <p class="text-yellow-500 uppercase tracking-[0.3em] text-sm mb-4 reveal-text opacity-0" id="hero-subtitle">
+                Premium Oto Galeri
+            </p>
+            <h1 class="brand-font text-5xl md:text-7xl lg:text-9xl font-black mb-6 leading-tight">
+                <span class="block reveal-text opacity-0" id="hero-title-1">LÜKSÜN</span>
+                <span class="block gradient-text reveal-text opacity-0" id="hero-title-2">YENİ TANIMI</span>
+            </h1>
+            <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 reveal-text opacity-0" id="hero-desc">
+                360° sanal showroom, AI destekli kişiselleştirme ve premium araç koleksiyonuyla tanışın.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center reveal-text opacity-0" id="hero-buttons">
+                <button onclick="scrollToSection('araclar')" class="magnetic-btn gold-bg text-black px-8 py-4 rounded-full font-bold uppercase tracking-wider hover:shadow-[0_0_30px_rgba(192,160,98,0.5)] transition-all">
+                    Araçları Keşfet
+                </button>
+                <button onclick="openVirtualShowroom()" class="magnetic-btn glass px-8 py-4 rounded-full font-bold uppercase tracking-wider hover:border-yellow-500 transition-all flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Sanal Tur
+                </button>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-20 bg-black relative overflow-hidden">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center parallax-layer" data-speed="0.5">
+                    <div class="text-4xl md:text-5xl font-bold gradient-text mb-2 counter-value" data-target="150">0</div>
+                    <p class="text-gray-400 uppercase tracking-wider text-sm">Premium Araç</p>
+                </div>
+                <div class="text-center parallax-layer" data-speed="0.7">
+                    <div class="text-4xl md:text-5xl font-bold gradient-text mb-2 counter-value" data-target="12">0</div>
+                    <p class="text-gray-400 uppercase tracking-wider text-sm">Yıllık Deneyim</p>
+                </div>
+                <div class="text-center parallax-layer" data-speed="0.9">
+                    <div class="text-4xl md:text-5xl font-bold gradient-text mb-2 counter-value" data-target="5000">0</div>
+                    <p class="text-gray-400 uppercase tracking-wider text-sm">Mutlu Müşteri</p>
+                </div>
+                <div class="text-center parallax-layer" data-speed="1.1">
+                    <div class="text-4xl md:text-5xl font-bold gradient-text mb-2 counter-value" data-target="24">0</div>
+                    <p class="text-gray-400 uppercase tracking-wider text-sm">Saat Destek</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Cars Section -->
+    <section id="araclar" class="py-32 relative">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="brand-font text-4xl md:text-6xl font-bold mb-4">ÖNE ÇIKAN <span class="gradient-text">ARAÇLAR</span></h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Premium koleksiyonumuzdan seçilmiş en iyi araçlar</p>
+            </div>
+
+            <!-- Filters -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <button class="filter-chip active px-6 py-2 rounded-full text-sm uppercase tracking-wider" onclick="filterCars('all', this)">Tümü</button>
+                <button class="filter-chip px-6 py-2 rounded-full text-sm uppercase tracking-wider" onclick="filterCars('suv', this)">SUV</button>
+                <button class="filter-chip px-6 py-2 rounded-full text-sm uppercase tracking-wider" onclick="filterCars('sedan', this)">Sedan</button>
+                <button class="filter-chip px-6 py-2 rounded-full text-sm uppercase tracking-wider" onclick="filterCars('sport', this)">Spor</button>
+                <button class="filter-chip px-6 py-2 rounded-full text-sm uppercase tracking-wider" onclick="filterCars('electric', this)">Elektrikli</button>
+            </div>
+
+            <!-- Cars Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="cars-grid">
+                <!-- Car 1 -->
+                <div class="car-card glass rounded-2xl overflow-hidden group" data-category="suv">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?w=800&q=80" alt="Luxury SUV" class="car-image w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 gold-bg text-black px-3 py-1 rounded-full text-xs font-bold">YENİ</div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            <button onclick="openCarDetail('suv1')" class="w-full gold-bg text-black py-3 rounded-full font-bold uppercase tracking-wider hover:shadow-lg transition-all">
+                                Detayları Gör
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="brand-font text-xl font-bold mb-1">Range Rover Sport</h3>
+                                <p class="text-gray-400 text-sm">2024 Model • Otomatik</p>
+                            </div>
+                            <span class="text-yellow-500 font-bold text-xl">₺4.250.000</span>
+                        </div>
+                        <div class="flex gap-4 mt-4 text-sm text-gray-400">
+                            <span class="flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                530 HP
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                4.5s
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Car 2 -->
+                <div class="car-card glass rounded-2xl overflow-hidden group" data-category="sport">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?w=800&q=80" alt="Sports Car" class="car-image w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            <button onclick="openCarDetail('sport1')" class="w-full gold-bg text-black py-3 rounded-full font-bold uppercase tracking-wider hover:shadow-lg transition-all">
+                                Detayları Gör
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="brand-font text-xl font-bold mb-1">Porsche 911 GT3</h3>
+                                <p class="text-gray-400 text-sm">2024 Model • PDK</p>
+                            </div>
+                            <span class="text-yellow-500 font-bold text-xl">₺8.900.000</span>
+                        </div>
+                        <div class="flex gap-4 mt-4 text-sm text-gray-400">
+                            <span class="flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                510 HP
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                3.2s
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Car 3 -->
+                <div class="car-card glass rounded-2xl overflow-hidden group" data-category="electric">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80" alt="Electric Car" class="car-image w-full h-full object-cover">
+                        <div class="absolute top-4 left-4 bg-green-500 text-black px-3 py-1 rounded-full text-xs font-bold">ELEKTRİKLİ</div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            <button onclick="openCarDetail('electric1')" class="w-full gold-bg text-black py-3 rounded-full font-bold uppercase tracking-wider hover:shadow-lg transition-all">
+                                Detayları Gör
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="brand-font text-xl font-bold mb-1">Tesla Model S Plaid</h3>
+                                <p class="text-gray-400 text-sm">2024 Model • Otomatik</p>
+                            </div>
+                            <span class="text-yellow-500 font-bold text-xl">₺3.800.000</span>
+                        </div>
+                        <div class="flex gap-4 mt-4 text-sm text-gray-400">
+                            <span class="flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                1020 HP
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                2.1s
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Car 4 -->
+                <div class="car-card glass rounded-2xl overflow-hidden group" data-category="sedan">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&q=80" alt="Luxury Sedan" class="car-image w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            <button onclick="openCarDetail('sedan1')" class="w-full gold-bg text-black py-3 rounded-full font-bold uppercase tracking-wider hover:shadow-lg transition-all">
+                                Detayları Gör
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="brand-font text-xl font-bold mb-1">BMW M5 Competition</h3>
+                                <p class="text-gray-400 text-sm">2024 Model • Otomatik</p>
+                            </div>
+                            <span class="text-yellow-500 font-bold text-xl">₺3.200.000</span>
+                        </div>
+                        <div class="flex gap-4 mt-4 text-sm text-gray-400">
+                            <span class="flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                625 HP
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                3.3s
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Car 5 -->
+                <div class="car-card glass rounded-2xl overflow-hidden group" data-category="suv">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80" alt="Luxury SUV" class="car-image w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            <button onclick="openCarDetail('suv2')" class="w-full gold-bg text-black py-3 rounded-full font-bold uppercase tracking-wider hover:shadow-lg transition-all">
+                                Detayları Gör
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="brand-font text-xl font-bold mb-1">Mercedes G63 AMG</h3>
+                                <p class="text-gray-400 text-sm">2024 Model • Otomatik</p>
+                            </div>
+                            <span class="text-yellow-500 font-bold text-xl">₺5.500.000</span>
+                        </div>
+                        <div class="flex gap-4 mt-4 text-sm text-gray-400">
+                            <span class="flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                585 HP
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                4.5s
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Car 6 -->
+                <div class="car-card glass rounded-2xl overflow-hidden group" data-category="sport">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&q=80" alt="Sports Car" class="car-image w-full h-full object-cover">
+                        <div class="absolute top-4 right-4 gold-bg text-black px-3 py-1 rounded-full text-xs font-bold">SINIRLI</div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                            <button onclick="openCarDetail('sport2')" class="w-full gold-bg text-black py-3 rounded-full font-bold uppercase tracking-wider hover:shadow-lg transition-all">
+                                Detayları Gör
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="brand-font text-xl font-bold mb-1">Ferrari F8 Tributo</h3>
+                                <p class="text-gray-400 text-sm">2023 Model • F1</p>
+                            </div>
+                            <span class="text-yellow-500 font-bold text-xl">₺12.500.000</span>
+                        </div>
+                        <div class="flex gap-4 mt-4 text-sm text-gray-400">
+                            <span class="flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                720 HP
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                2.9s
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <button class="magnetic-btn border border-yellow-500 text-yellow-500 px-8 py-3 rounded-full uppercase tracking-wider hover:bg-yellow-500 hover:text-black transition-all">
+                    Tüm Araçları Gör
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Virtual Showroom Section -->
+    <section id="sanal-showroom" class="py-32 relative bg-gradient-to-b from-black via-gray-900 to-black">
+        <div class="container mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="brand-font text-4xl md:text-5xl font-bold mb-6">
+                        SANAL <span class="gradient-text">SHOWROOM</span>
+                    </h2>
+                    <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+                        Evinizin konforundan lüks araçlarımızı keşfedin. 360° görüntüleme teknolojisiyle araçların her detayını inceleyin, iç mekanları gezin ve istediğiniz özelleştirmeleri yapın.
+                    </p>
+                    
+                    <div class="space-y-6 mb-8">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-full gold-bg flex items-center justify-center text-black font-bold flex-shrink-0">1</div>
+                            <div>
+                                <h4 class="font-bold text-lg mb-1">360° İnceleme</h4>
+                                <p class="text-gray-400 text-sm">Aracın etrafında tam tur atın, her açıdan detayları görün</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-full gold-bg flex items-center justify-center text-black font-bold flex-shrink-0">2</div>
+                            <div>
+                                <h4 class="font-bold text-lg mb-1">İç Mekan Turu</h4>
+                                <p class="text-gray-400 text-sm">VR teknolojisiyle aracın içinde sanki oradaymış gibi dolaşın</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-full gold-bg flex items-center justify-center text-black font-bold flex-shrink-0">3</div>
+                            <div>
+                                <h4 class="font-bold text-lg mb-1">Canlı Konfigürasyon</h4>
+                                <p class="text-gray-400 text-sm">Renk, jant ve iç mekan seçeneklerini anında değiştirin</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="openVirtualShowroom()" class="magnetic-btn gold-bg text-black px-8 py-4 rounded-full font-bold uppercase tracking-wider hover:shadow-[0_0_30px_rgba(192,160,98,0.5)] transition-all flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                        Showroom'a Giriş Yap
+                    </button>
+                </div>
+
+                <div class="relative">
+                    <div class="glass rounded-3xl p-2 relative overflow-hidden">
+                        <div class="relative h-96 rounded-2xl overflow-hidden bg-gray-800" id="showroom-preview">
+                            <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?w=800&q=80" alt="360 Preview" class="w-full h-full object-cover opacity-80" id="preview-image">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button onclick="rotatePreview()" class="w-20 h-20 rounded-full gold-bg flex items-center justify-center text-black hover:scale-110 transition-transform">
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="absolute bottom-4 left-4 right-4 glass rounded-full px-4 py-2 flex justify-between items-center text-sm">
+                                <span class="text-gray-400">360° Görüntüleme</span>
+                                <span class="gold-accent" id="rotation-degree">0°</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Floating Elements -->
+                    <div class="absolute -top-4 -right-4 w-24 h-24 gold-bg rounded-full opacity-20 blur-xl animate-pulse"></div>
+                    <div class="absolute -bottom-4 -left-4 w-32 h-32 bg-white rounded-full opacity-10 blur-xl animate-pulse delay-1000"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Configurator Modal -->
+    <div id="configurator-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-xl" onclick="closeConfigurator()"></div>
+        <div class="absolute inset-4 md:inset-10 bg-gray-900 rounded-3xl overflow-hidden flex flex-col">
+            <div class="flex justify-between items-center p-6 border-b border-gray-800">
+                <h3 class="brand-font text-2xl font-bold gradient-text">AI KONFİGÜRATOR</h3>
+                <button onclick="closeConfigurator()" class="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-red-500/20 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+                <!-- Preview -->
+                <div class="flex-1 relative bg-gradient-to-br from-gray-800 to-black flex items-center justify-center p-8">
+                    <img src="https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?w=800&q=80" alt="Configurator Preview" class="max-w-full max-h-full object-contain transition-all duration-500" id="config-preview">
+                    
+                    <!-- Hotspots -->
+                    <div class="absolute top-1/4 left-1/4 w-4 h-4 gold-bg rounded-full animate-ping"></div>
+                    <div class="absolute top-1/3 right-1/3 w-4 h-4 gold-bg rounded-full animate-ping delay-300"></div>
+                </div>
+                
+                <!-- Controls -->
+                <div class="w-full lg:w-96 bg-black/50 p-6 overflow-y-auto border-l border-gray-800">
+                    <div class="space-y-8">
+                        <!-- Color Selection -->
+                        <div>
+                            <h4 class="text-sm uppercase tracking-wider text-gray-400 mb-4">Gövde Rengi</h4>
+                            <div class="flex gap-3 flex-wrap">
+                                <div class="color-option active bg-red-600" onclick="changeColor('red', this)" title="Rosso Corsa"></div>
+                                <div class="color-option bg-blue-600" onclick="changeColor('blue', this)" title="Blu Tour de France"></div>
+                                <div class="color-option bg-gray-900" onclick="changeColor('black', this)" title="Nero"></div>
+                                <div class="color-option bg-white" onclick="changeColor('white', this)" title="Bianco"></div>
+                                <div class="color-option bg-yellow-500" onclick="changeColor('yellow', this)" title="Giallo"></div>
+                                <div class="color-option bg-gray-500" onclick="changeColor('gray', this)" title="Grigio"></div>
+                            </div>
+                        </div>
+
+                        <!-- Wheel Selection -->
+                        <div>
+                            <h4 class="text-sm uppercase tracking-wider text-gray-400 mb-4">Jant Seçimi</h4>
+                            <div class="space-y-3">
+                                <button class="w-full p-4 glass rounded-xl text-left hover:border-yellow-500 transition-all border border-transparent focus:border-yellow-500" onclick="selectWheel(this)">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-bold">20" Sport Jant</span>
+                                        <span class="text-yellow-500">Standart</span>
+                                    </div>
+                                </button>
+                                <button class="w-full p-4 glass rounded-xl text-left hover:border-yellow-500 transition-all border border-transparent focus:border-yellow-500" onclick="selectWheel(this)">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-bold">21" Forged Jant</span>
+                                        <span class="text-yellow-500">+₺45.000</span>
+                                    </div>
+                                </button>
+                                <button class="w-full p-4 glass rounded-xl text-left hover:border-yellow-500 transition-all border border-transparent focus:border-yellow-500" onclick="selectWheel(this)">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-bold">22" Karbon Jant</span>
+                                        <span class="text-yellow-500">+₺85.000</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Interior -->
+                        <div>
+                            <h4 class="text-sm uppercase tracking-wider text-gray-400 mb-4">İç Mekan</h4>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button class="p-3 glass rounded-lg text-sm hover:border-yellow-500 transition-all border border-transparent" onclick="selectInterior(this)">Siyah Deri</button>
+                                <button class="p-3 glass rounded-lg text-sm hover:border-yellow-500 transition-all border border-transparent" onclick="selectInterior(this)">Bej Deri</button>
+                                <button class="p-3 glass rounded-lg text-sm hover:border-yellow-500 transition-all border border-transparent" onclick="selectInterior(this)">Kırmızı Deri</button>
+                                <button class="p-3 glass rounded-lg text-sm hover:border-yellow-500 transition-all border border-transparent" onclick="selectInterior(this)">Alcantara</button>
+                            </div>
+                        </div>
+
+                        <!-- AI Suggestion -->
+                        <div class="glass rounded-xl p-4 border border-yellow-500/30">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-6 h-6 text-yellow-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                                <div>
+                                    <h5 class="font-bold text-sm mb-1">AI Önerisi</h5>
+                                    <p class="text-xs text-gray-400">Bu kombinasyon en popüler tercihler arasında. %15 daha yüksek yeniden satış değeri.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="border-t border-gray-800 pt-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-gray-400">Başlangıç Fiyatı</span>
+                                <span class="font-bold">₺8.900.000</span>
+                            </div>
+                            <div class="flex justify-between items-center mb-4 text-yellow-500">
+                                <span>Ekstralar</span>
+                                <span>+₺130.000</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xl font-bold mb-6">
+                                <span>Toplam</span>
+                                <span class="gradient-text">₺9.030.000</span>
+                            </div>
+                            <button class="w-full gold-bg text-black py-4 rounded-full font-bold uppercase tracking-wider hover:shadow-lg transition-all" onclick="saveConfiguration()">
+                                Konfigürasyonu Kaydet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonials -->
+    <section class="py-32 relative overflow-hidden">
+        <div class="container mx-auto px-6">
+            <h2 class="brand-font text-4xl md:text-5xl font-bold text-center mb-16">
+                MÜŞTERİ <span class="gradient-text">YORUMLARI</span>
+            </h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="testimonial-card rounded-2xl p-8 transform hover:-translate-y-2 transition-all duration-300">
+                    <div class="flex items-center gap-4 mb-6">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80" alt="Customer" class="w-16 h-16 rounded-full object-cover border-2 border-yellow-500">
+                        <div>
+                            <h4 class="font-bold">Ahmet Yılmaz</h4>
+                            <p class="text-gray-400 text-sm">İş İnsanı</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-1 mb-4">
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">"Sanal showroom sayesinde aracı detaylıca inceleme fırsatı buldum. Satın alma süreci çok profesyonel ve hızlıydı. Kesinlikle tavsiye ederim."</p>
+                </div>
+
+                <div class="testimonial-card rounded-2xl p-8 transform hover:-translate-y-2 transition-all duration-300">
+                    <div class="flex items-center gap-4 mb-6">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80" alt="Customer" class="w-16 h-16 rounded-full object-cover border-2 border-yellow-500">
+                        <div>
+                            <h4 class="font-bold">Zeynep Kaya</h4>
+                            <p class="text-gray-400 text-sm">Yatırımcı</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-1 mb-4">
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">"AI konfigürator çok kullanışlı. Kendi zevkime göre aracı tasarlayabildim ve uzmanlar danışmanlık sağladı. Lüksün adresi burası."</p>
+                </div>
+
+                <div class="testimonial-card rounded-2xl p-8 transform hover:-translate-y-2 transition-all duration-300">
+                    <div class="flex items-center gap-4 mb-6">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80" alt="Customer" class="w-16 h-16 rounded-full object-cover border-2 border-yellow-500">
+                        <div>
+                            <h4 class="font-bold">Mehmet Demir</h4>
+                            <p class="text-gray-400 text-sm">Pilot</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-1 mb-4">
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">"2 yıldır buradan araç alıyorum. Her seferinde mükemmel hizmet ve kalite. Özellikle finansman seçenekleri çok avantajlı."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="iletisim" class="py-32 relative bg-gradient-to-b from-black to-gray-900">
+        <div class="container mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-16">
+                <div>
+                    <h2 class="brand-font text-4xl md:text-5xl font-bold mb-6">
+                        BİZE <span class="gradient-text">ULAŞIN</span>
+                    </h2>
+                    <p class="text-gray-400 text-lg mb-12">
+                        Premium araç sahibi olmak için hemen iletişime geçin. Uzman ekibimiz size en uygun çözümleri sunacaktır.
+                    </p>
+
+                    <div class="space-y-6 mb-12">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full glass flex items-center justify-center">
+                                <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">Adres</h4>
+                                <p class="text-gray-400">Levent Mahallesi, Çamlıca Caddesi No:42, Beşiktaş/İstanbul</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full glass flex items-center justify-center">
+                                <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">Telefon</h4>
+                                <p class="text-gray-400">+90 (212) 555 00 00</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full glass flex items-center justify-center">
+                                <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-1">E-posta</h4>
+                                <p class="text-gray-400">info@luxemotors.com</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Map Placeholder -->
+                    <div class="glass rounded-2xl h-64 overflow-hidden relative">
+                        <div class="absolute inset-0 bg-gray-800 flex items-center justify-center">
+                            <div class="text-center">
+                                <svg class="w-12 h-12 text-yellow-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0121 18.382V7.618a1 1 0 01-.806-.984A1 1 0 0118 7.618l-4.553 2.276A1 1 0 0113 10.618v7.764a1 1 0 01.447.894z"></path></svg>
+                                <p class="text-gray-400">Harita Görünümü</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="glass rounded-3xl p-8">
+                    <h3 class="brand-font text-2xl font-bold mb-6">Randevu Al</h3>
+                    <form onsubmit="handleSubmit(event)" class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-2">Adınız</label>
+                                <input type="text" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:border-yellow-500 focus:outline-none transition-colors" placeholder="Ahmet" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-2">Soyadınız</label>
+                                <input type="text" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:border-yellow-500 focus:outline-none transition-colors" placeholder="Yılmaz" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">E-posta</label>
+                            <input type="email" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:border-yellow-500 focus:outline-none transition-colors" placeholder="ahmet@email.com" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Telefon</label>
+                            <input type="tel" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:border-yellow-500 focus:outline-none transition-colors" placeholder="+90 555 000 00 00">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">İlgilendiğiniz Araç</label>
+                            <select class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:border-yellow-500 focus:outline-none transition-colors">
+                                <option>Seçiniz</option>
+                                <option>Range Rover Sport</option>
+                                <option>Porsche 911 GT3</option>
+                                <option>Tesla Model S Plaid</option>
+                                <option>BMW M5 Competition</option>
+                                <option>Mercedes G63 AMG</option>
+                                <option>Ferrari F8 Tributo</option>
+                                <option>Diğer</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Mesajınız</label>
+                            <textarea rows="4" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:border-yellow-500 focus:outline-none transition-colors" placeholder="Tercih ettiğiniz tarih ve saat bilgisi..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full gold-bg text-black py-4 rounded-full font-bold uppercase tracking-wider hover:shadow-[0_0_30px_rgba(192,160,98,0.5)] transition-all">
+                            Gönder
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-gray-800 py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="brand-font text-2xl font-bold gradient-text mb-4">LUXE MOTORS</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        2012'den beri Türkiye'nin lider premium oto galerisi. Lüks ve performansın buluşma noktası.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Hızlı Bağlantılar</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-yellow-500 transition-colors">Ana Sayfa</a></li>
+                        <li><a href="#" class="hover:text-yellow-500 transition-colors">Araçlar</a></li>
+                        <li><a href="#" class="hover:text-yellow-500 transition-colors">Hakkımızda</a></li>
+                        <li><a href="#" class="hover:text-yellow-500 transition-colors">İletişim</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Hizmetler</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-yellow-500 transition-colors">Sanal Showroom</a></li>
+                        <li><a href="#" class="hover:text-yellow-500 transition-colors">Araç Konfigürasyonu</a></li>
+                        <li><a href="#" class="hover:text-yellow-500 transition-colors">Finansman</a></li>
+                        <li><a href="#" class="hover:text-yellow-500 transition-colors">Servis</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Bizi Takip Edin</h4>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-yellow-500 hover:text-black transition-all">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-yellow-500 hover:text-black transition-all">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-yellow-500 hover:text-black transition-all">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-gray-400 text-sm">© 2024 Luxe Motors. Tüm hakları saklıdır.</p>
+                <div class="flex gap-6 text-sm text-gray-400">
+                    <a href="#" class="hover:text-yellow-500 transition-colors">Gizlilik Politikası</a>
+                    <a href="#" class="hover:text-yellow-500 transition-colors">Kullanım Koşulları</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget">
+        <button class="chat-btn" onclick="toggleChat()">
+            <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </svg>
+        </button>
+        
+        <!-- Chat Window -->
+        <div id="chat-window" class="hidden absolute bottom-20 right-0 w-80 bg-gray-900 rounded-2xl shadow-2xl border border-gray-800 overflow-hidden">
+            <div class="gold-bg text-black p-4 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="font-bold">Canlı Destek</span>
+                </div>
+                <button onclick="toggleChat()" class="hover:bg-black/20 rounded-full p-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="h-80 p-4 overflow-y-auto space-y-4" id="chat-messages">
+                <div class="flex gap-2">
+                    <div class="w-8 h-8 rounded-full gold-bg flex items-center justify-center text-black text-xs font-bold">LM</div>
+                    <div class="bg-gray-800 rounded-2xl rounded-tl-none px-4 py-2 max-w-[80%]">
+                        <p class="text-sm">Merhaba! Luxe Motors'a hoş geldiniz. Size nasıl yardımcı olabilirim?</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-gray-800">
+                <div class="flex gap-2">
+                    <input type="text" id="chat-input" placeholder="Mesajınızı yazın..." class="flex-1 bg-black/50 border border-gray-700 rounded-full px-4 py-2 text-sm focus:border-yellow-500 focus:outline-none" onkeypress="handleChatKey(event)">
+                    <button onclick="sendMessage()" class="w-10 h-10 rounded-full gold-bg flex items-center justify-center text-black hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+                initAnimations();
+            }, 1500);
+        });
+
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        const cursorDot = document.getElementById('cursor-dot');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 10 + 'px';
+            cursorDot.style.left = e.clientX - 2 + 'px';
+            cursorDot.style.top = e.clientY - 2 + 'px';
+        });
+
+        document.addEventListener('mousedown', () => {
+            cursor.style.transform = 'scale(0.8)';
+        });
+
+        document.addEventListener('mouseup', () => {
+            cursor.style.transform = 'scale(1)';
+        });
+
+        // Hover effects for cursor
+        document.querySelectorAll('a, button, .car-card').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.style.transform = 'scale(1.5)';
+                cursor.style.borderColor = '#f0d78c';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.style.transform = 'scale(1)';
+                cursor.style.borderColor = '#c0a062';
+            });
+        });
+
+        // Initialize Animations
+        function initAnimations() {
+            // GSAP Animations
+            gsap.to('#hero-subtitle', { opacity: 1, y: 0, duration: 1, delay: 0.2 });
+            gsap.to('#hero-title-1', { opacity: 1, y: 0, duration: 1, delay: 0.4 });
+            gsap.to('#hero-title-2', { opacity: 1, y: 0, duration: 1, delay: 0.6 });
+            gsap.to('#hero-desc', { opacity: 1, y: 0, duration: 1, delay: 0.8 });
+            gsap.to('#hero-buttons', { opacity: 1, y: 0, duration: 1, delay: 1 });
+
+            // Counter Animation
+            const counters = document.querySelectorAll('.counter-value');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                gsap.to(counter, {
+                    innerHTML: target,
+                    duration: 2,
+                    snap: { innerHTML: 1 },
+                    scrollTrigger: {
+                        trigger: counter,
+                        start: 'top 80%'
+                    }
+                });
+            });
+
+            // Parallax
+            gsap.utils.toArray('.parallax-layer').forEach(layer => {
+                const speed = layer.getAttribute('data-speed');
+                gsap.to(layer, {
+                    y: (i, target) => -ScrollTrigger.maxScroll(window) * speed * 0.1,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: layer,
+                        start: 'top bottom',
+                        end: 'bottom top',
+                        scrub: true
+                    }
+                });
+            });
+
+            // Car cards stagger
+            gsap.from('.car-card', {
+                y: 50,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.1,
+                scrollTrigger: {
+                    trigger: '#cars-grid',
+                    start: 'top 80%'
+                }
+            });
+        }
+
+        // Create Particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // Mobile Menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Filter Cars
+        function filterCars(category, btn) {
+            // Update active button
+            document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Filter cards
+            const cards = document.querySelectorAll('.car-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'block';
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'scale(1)';
+                    }, 10);
+                } else {
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.8)';
+                    setTimeout(() => {
+                        card.style.display = 'none';
+                    }, 300);
+                }
+            });
+        }
+
+        // Configurator
+        function openConfigurator() {
+            document.getElementById('configurator-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeConfigurator() {
+            document.getElementById('configurator-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function changeColor(color, element) {
+            document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('active'));
+            element.classList.add('active');
+            
+            // Simulate color change with filter
+            const preview = document.getElementById('config-preview');
+            const filters = {
+                'red': 'hue-rotate(0deg)',
+                'blue': 'hue-rotate(180deg)',
+                'black': 'brightness(0.5)',
+                'white': 'brightness(1.2)',
+                'yellow': 'hue-rotate(45deg) saturate(1.5)',
+                'gray': 'grayscale(0.8)'
+            };
+            preview.style.filter = filters[color];
+        }
+
+        function selectWheel(btn) {
+            document.querySelectorAll('[onclick^="selectWheel"]').forEach(b => b.classList.remove('border-yellow-500'));
+            btn.classList.add('border-yellow-500');
+        }
+
+        function selectInterior(btn) {
+            document.querySelectorAll('[onclick^="selectInterior"]').forEach(b => b.classList.remove('border-yellow-500'));
+            btn.classList.add('border-yellow-500');
+        }
+
+        function saveConfiguration() {
+            alert('Konfigürasyonunuz kaydedildi! En kısa sürede size dönüş yapacağız.');
+            closeConfigurator();
+        }
+
+        // Virtual Showroom Preview
+        let rotation = 0;
+        function rotatePreview() {
+            rotation = (rotation + 45) % 360;
+            document.getElementById('rotation-degree').textContent = rotation + '°';
+            document.getElementById('preview-image').style.transform = `rotateY(${rotation}deg)`;
+        }
+
+        function openVirtualShowroom() {
+            alert('Sanal Showroom yükleniyor... (Demo modu)');
+        }
+
+        function openCarDetail(carId) {
+            alert('Araç detay sayfası yükleniyor... (Demo modu)');
+        }
+
+        // Chat Widget
+        function toggleChat() {
+            const chatWindow = document.getElementById('chat-window');
+            chatWindow.classList.toggle('hidden');
+        }
+
+        function handleChatKey(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Add user message
+            const messagesContainer = document.getElementById('chat-messages');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'flex gap-2 justify-end';
+            userMsg.innerHTML = `
+                <div class="bg-yellow-500 text-black rounded-2xl rounded-tr-none px-4 py-2 max-w-[80%]">
+                    <p class="text-sm">${message}</p>
+                </div>
+            `;
+            messagesContainer.appendChild(userMsg);
+            input.value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Simulate response
+            setTimeout(() => {
+                const responses = [
+                    "Harika bir seçim! Bu model hakkında detaylı bilgi almak ister misiniz?",
+                    "Size en yakın showroom'umuz Beşiktaş'ta. Randevu almak ister misiniz?",
+                    "Bu aracın finansman seçenekleri hakkında bilgi verebilirim.",
+                    "Stok durumunu kontrol ediyorum, biraz bekleyin lütfen..."
+                ];
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                
+                const botMsg = document.createElement('div');
+                botMsg.className = 'flex gap-2';
+                botMsg.innerHTML = `
+                    <div class="w-8 h-8 rounded-full gold-bg flex items-center justify-center text-black text-xs font-bold">LM</div>
+                    <div class="bg-gray-800 rounded-2xl rounded-tl-none px-4 py-2 max-w-[80%]">
+                        <p class="text-sm">${randomResponse}</p>
+                    </div>
+                `;
+                messagesContainer.appendChild(botMsg);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 1000);
+        }
+
+        // Contact Form
+        function handleSubmit(e) {
+            e.preventDefault();
+            alert('Mesajınız alındı! En kısa sürede size dönüş yapacağız.');
+            e.target.reset();
+        }
+
+        // Smooth Scroll
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Navbar scroll effect
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                navbar.classList.add('py-2');
+                navbar.classList.remove('py-4');
+            } else {
+                navbar.classList.add('py-4');
+                navbar.classList.remove('py-2');
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        // Three.js Hero Background
+        function initThreeJS() {
+            const canvas = document.getElementById('hero-canvas');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            // Create particles
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 700;
+            const posArray = new Float32Array(particlesCount * 3);
+
+            for(let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 5;
+            }
+
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.005,
+                color: 0xc0a062,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+
+            camera.position.z = 3;
+
+            // Mouse interaction
+            let mouseX = 0;
+            let mouseY = 0;
+
+            document.addEventListener('mousemove', (event) => {
+                mouseX = event.clientX / window.innerWidth - 0.5;
+                mouseY = event.clientY / window.innerHeight - 0.5;
+            });
+
+            // Animation
+            function animate() {
+                requestAnimationFrame(animate);
+
+                particlesMesh.rotation.y += 0.001;
+                particlesMesh.rotation.x += 0.001;
+
+                // Mouse parallax
+                particlesMesh.rotation.x += mouseY * 0.05;
+                particlesMesh.rotation.y += mouseX * 0.05;
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            // Resize handler
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        // Initialize Three.js after load
+        window.addEventListener('load', initThreeJS);
+    </script>
+</body>
+</html>
