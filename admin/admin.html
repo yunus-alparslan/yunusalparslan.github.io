@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harikam - Admin Paneli</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config={theme:{extend:{fontFamily:{inter:['Inter','sans-serif']},colors:{brand:{50:'#FEF2F2',100:'#FEE2E2',200:'#FECACA',300:'#FCA5A5',400:'#F87171',500:'#EF4444',600:'#DC2626',700:'#B91C1C',800:'#991B1B',900:'#7F1D1D'},wp:{50:'#ECFDF5',500:'#25D366',600:'#128C7E'}}}}}
+    </script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:#F3F4F6;color:#1F2937}
+        .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+        @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes slideDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+        .afiu{animation:fadeInUp .8s ease-out forwards}
+        .asd{animation:slideDown .5s ease-out forwards}
+        .ashake{animation:shake .5s ease-in-out}
+        .login-bg{background:linear-gradient(135deg,#7F1D1D 0%,#DC2626 50%,#EF4444 100%)}
+        .asi{transition:all .2s ease}.asi:hover,.asi.active{background:#FEF2F2;color:#DC2626}
+        .sc{background:linear-gradient(135deg,#FEF2F2,#FFF);border:1px solid #FECACA}
+        .bp{background:linear-gradient(135deg,#DC2626,#B91C1C);transition:all .3s ease}
+        .bp:hover{background:linear-gradient(135deg,#EF4444,#DC2626);transform:translateY(-1px);box-shadow:0 8px 20px rgba(220,38,38,.3)}
+        .toast{animation:slideDown .4s ease-out forwards}
+        input:focus,textarea:focus,select:focus{outline:none;border-color:#DC2626;box-shadow:0 0 0 3px rgba(220,38,38,.1)}
+    </style>
+</head>
+<body class="font-inter">
+<div id="toastC" class="fixed top-4 right-4 z-[9999] flex flex-col gap-2"></div>
+
+<!-- ==================== GİRİŞ EKRANI ==================== -->
+<div id="loginScreen" class="min-h-screen login-bg flex items-center justify-center p-6">
+    <div class="w-full max-w-md afiu">
+        <div class="text-center mb-8">
+            <a href="../" class="inline-flex items-center gap-3 mb-8 group">
+                <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/20 group-hover:bg-white/30 transition-all"><i data-lucide="milk" class="w-7 h-7 text-white"></i></div>
+                <span class="text-2xl font-bold text-white">Harikam</span>
+            </a>
+            <div class="w-20 h-20 rounded-3xl bg-white/15 backdrop-blur-sm flex items-center justify-center mx-auto mb-5 border border-white/20">
+                <i data-lucide="shield-check" class="w-10 h-10 text-white"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-white">Admin Girişi</h1>
+            <p class="text-white/60 mt-2 text-sm">Yönetim paneline erişim için giriş yapın</p>
+        </div>
+        <div class="bg-white rounded-3xl shadow-2xl p-8">
+            <form onsubmit="doLogin(event)" id="loginForm">
+                <div id="loginErr" class="hidden mb-5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm flex items-center gap-2">
+                    <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i>
+                    <span>Kullanıcı adı veya şifre hatalı!</span>
+                </div>
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Kullanıcı Adı</label>
+                    <div class="relative">
+                        <i data-lucide="user" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                        <input type="text" id="lU" required class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-white text-sm" placeholder="Kullanıcı adınız" autocomplete="username">
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Şifre</label>
+                    <div class="relative">
+                        <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                        <input type="password" id="lP" required class="w-full pl-11 pr-12 py-3 rounded-xl border border-gray-200 bg-white text-sm" placeholder="Şifreniz" autocomplete="current-password">
+                        <button type="button" onclick="const i=document.getElementById('lP');i.type=i.type==='password'?'text':'password'" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+                <button type="submit" class="bp w-full py-3.5 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2">
+                    <i data-lucide="log-in" class="w-4 h-4"></i> Giriş Yap
+                </button>
+            </form>
+            <div class="mt-6 text-center">
+                <a href="../" class="text-sm text-gray-500 hover:text-brand-600 transition-colors inline-flex items-center gap-1">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Siteye Dön
+                </a>
+            </div>
+            <div class="mt-5 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <p class="text-xs text-gray-400 text-center font-medium">Demo Giriş Bilgileri</p>
+                <div class="flex items-center justify-center gap-4 mt-2">
+                    <span class="text-xs text-gray-500">Kullanıcı: <code class="font-mono bg-white px-2 py-0.5 rounded border border-gray-200 font-semibold text-gray-700">admin</code></span>
+                    <span class="text-xs text-gray-500">Şifre: <code class="font-mono bg-white px-2 py-0.5 rounded border border-gray-200 font-semibold text-gray-700">harikam2026</code></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== ADMIN PANELİ ==================== -->
+<div id="adminPanel" class="hidden">
+    <!-- Top Bar -->
+    <div class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 fixed top-0 left-0 right-0 z-50">
+        <div class="flex items-center gap-3">
+            <a href="../" class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center hover:bg-brand-500 transition-all"><i data-lucide="milk" class="w-4 h-4 text-white"></i></a>
+            <span class="font-bold text-gray-900">Harikam</span>
+            <span class="px-2 py-0.5 rounded-md bg-brand-50 text-brand-600 text-xs font-semibold">Admin</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="hidden sm:flex items-center gap-2 text-sm text-gray-500">
+                <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white font-bold text-xs">AY</div>
+                <span class="font-medium text-gray-700">Ahmet Yılmaz</span>
+            </div>
+            <a href="../" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-gray-500 hover:text-brand-600 hover:bg-brand-50 transition-all">
+                <i data-lucide="globe" class="w-4 h-4"></i><span class="hidden sm:inline">Siteye Git</span>
+            </a>
+            <button onclick="doLogout()" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 transition-all">
+                <i data-lucide="log-out" class="w-4 h-4"></i><span class="hidden sm:inline">Çıkış</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="flex pt-16" style="height:100vh">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white border-r border-gray-200 p-4 hidden md:block flex-shrink-0 overflow-y-auto no-scrollbar">
+            <nav class="space-y-1">
+                <button onclick="sT('dashboard')" class="asi active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700" data-t="dashboard"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> Gösterge Paneli</button>
+                <button onclick="sT('products')" class="asi w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700" data-t="products"><i data-lucide="package" class="w-5 h-5"></i> Ürünler</button>
+                <button onclick="sT('orders')" class="asi w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700" data-t="orders"><i data-lucide="shopping-cart" class="w-5 h-5"></i> Siparişler</button>
+                <button onclick="sT('messages')" class="asi w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700" data-t="messages"><i data-lucide="message-square" class="w-5 h-5"></i> Mesajlar <span class="ml-auto w-5 h-5 rounded-full bg-brand-600 text-white text-xs flex items-center justify-center">3</span></button>
+                <button onclick="sT('settings')" class="asi w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-700" data-t="settings"><i data-lucide="settings" class="w-5 h-5"></i> Ayarlar</button>
+            </nav>
+            <div class="mt-6 p-4 bg-brand-50 rounded-2xl border border-brand-100">
+                <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-brand-600 flex items-center justify-center text-white font-bold text-sm">AY</div><div><p class="font-semibold text-sm text-gray-900">Ahmet Yılmaz</p><p class="text-xs text-gray-500">Yönetici</p></div></div>
+            </div>
+        </div>
+        <!-- Mobile Tabs -->
+        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex z-50">
+            <button onclick="sT('dashboard')" class="flex-1 flex flex-col items-center py-3 text-brand-600 amt" data-t="dashboard"><i data-lucide="layout-dashboard" class="w-5 h-5"></i><span class="text-[10px] mt-1">Panel</span></button>
+            <button onclick="sT('products')" class="flex-1 flex flex-col items-center py-3 text-gray-400 amt" data-t="products"><i data-lucide="package" class="w-5 h-5"></i><span class="text-[10px] mt-1">Ürünler</span></button>
+            <button onclick="sT('orders')" class="flex-1 flex flex-col items-center py-3 text-gray-400 amt" data-t="orders"><i data-lucide="shopping-cart" class="w-5 h-5"></i><span class="text-[10px] mt-1">Sipariş</span></button>
+            <button onclick="sT('messages')" class="flex-1 flex flex-col items-center py-3 text-gray-400 amt" data-t="messages"><i data-lucide="message-square" class="w-5 h-5"></i><span class="text-[10px] mt-1">Mesaj</span></button>
+        </div>
+        <!-- Content -->
+        <div class="flex-1 overflow-y-auto p-6 lg:p-8 pb-24 md:pb-8 no-scrollbar">
+
+            <!-- DASHBOARD -->
+            <div id="t-dashboard" class="at">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Gösterge Paneli</h2>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                    <div class="sc rounded-2xl p-5"><div class="flex items-center justify-between mb-3"><div class="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center"><i data-lucide="package" class="w-5 h-5 text-brand-600"></i></div><span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-lg">+12%</span></div><p class="text-2xl font-bold text-gray-900" id="sP">0</p><p class="text-sm text-gray-500">Toplam Ürün</p></div>
+                    <div class="sc rounded-2xl p-5"><div class="flex items-center justify-between mb-3"><div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center"><i data-lucide="shopping-cart" class="w-5 h-5 text-blue-600"></i></div><span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-lg">+8%</span></div><p class="text-2xl font-bold text-gray-900" id="sO">0</p><p class="text-sm text-gray-500">Toplam Sipariş</p></div>
+                    <div class="sc rounded-2xl p-5"><div class="flex items-center justify-between mb-3"><div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center"><i data-lucide="turkish-lira" class="w-5 h-5 text-green-600"></i></div><span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-lg">+23%</span></div><p class="text-2xl font-bold text-gray-900" id="sR">₺0</p><p class="text-sm text-gray-500">Toplam Gelir</p></div>
+                    <div class="sc rounded-2xl p-5"><div class="flex items-center justify-between mb-3"><div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center"><i data-lucide="users" class="w-5 h-5 text-purple-600"></i></div><span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-lg">+15%</span></div><p class="text-2xl font-bold text-gray-900">1,247</p><p class="text-sm text-gray-500">Aktif Müşteri</p></div>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                    <div class="p-5 border-b border-gray-100 flex items-center justify-between"><h3 class="font-semibold text-gray-900">Son Siparişler</h3><button onclick="sT('orders')" class="text-sm text-brand-600 hover:text-brand-700 font-medium">Tümünü Gör →</button></div>
+                    <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-gray-50"><tr><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">No</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">Müşteri</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">Ürün</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">Tutar</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">Kaynak</th></tr></thead><tbody id="dOB" class="divide-y divide-gray-100"></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- PRODUCTS -->
+            <div id="t-products" class="at hidden">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Ürün Yönetimi</h2>
+                    <button onclick="oPM()" class="bp flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-medium"><i data-lucide="plus" class="w-4 h-4"></i> Yeni Ürün Ekle</button>
+                </div>
+                <div class="mb-6"><div class="relative max-w-md"><i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i><input type="text" id="aS" oninput="rAP()" placeholder="Ürün ara..." class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm"></div></div>
+                <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                    <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-gray-50"><tr><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">Ürün</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">Kategori</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">Fiyat</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">Stok</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">Durum</th><th class="text-right py-3 px-5 text-xs font-semibold text-gray-500 uppercase">İşlem</th></tr></thead><tbody id="aPB" class="divide-y divide-gray-100"></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- ORDERS -->
+            <div id="t-orders" class="at hidden">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Sipariş Yönetimi</h2>
+                <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                    <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-gray-50"><tr><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">No</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">Müşteri</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">Telefon</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">Adres</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">Ürün</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">Tutar</th><th class="text-left py-3 px-5 text-xs font-semibold text-gray-500 uppercase">Kaynak</th></tr></thead><tbody id="oB" class="divide-y divide-gray-100"></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- MESSAGES -->
+            <div id="t-messages" class="at hidden">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Gelen Mesajlar</h2>
+                <div class="space-y-4">
+                    <div class="bg-white rounded-2xl border border-gray-200 p-5"><div class="flex items-start justify-between mb-3"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-sm">EK</div><div><p class="font-semibold text-gray-900">Elif Kaya</p><p class="text-xs text-gray-500">elif@email.com · 2 saat önce</p></div></div><span class="px-2.5 py-1 rounded-lg bg-brand-50 text-brand-600 text-xs font-medium">Yeni</span></div><p class="text-sm text-gray-600">Merhaba, organik süte yeni başladık. Haftalık 10 litre sipariş vermek istiyoruz.</p><div class="flex gap-2 mt-4"><button onclick="toast('Yanıtlama sayfası açıldı','info')" class="px-4 py-2 rounded-lg bg-brand-50 text-brand-600 text-xs font-medium hover:bg-brand-100">Yanıtla</button><button onclick="toast('Arşivlendi','success')" class="px-4 py-2 rounded-lg bg-gray-50 text-gray-600 text-xs font-medium hover:bg-gray-100">Arşivle</button></div></div>
+                    <div class="bg-white rounded-2xl border border-gray-200 p-5"><div class="flex items-start justify-between mb-3"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm">MD</div><div><p class="font-semibold text-gray-900">Mehmet Demir</p><p class="text-xs text-gray-500">mehmet@email.com · 5 saat önce</p></div></div><span class="px-2.5 py-1 rounded-lg bg-brand-50 text-brand-600 text-xs font-medium">Yeni</span></div><p class="text-sm text-gray-600">Beyaz peynir stoklarınız ne zaman gelecek?</p><div class="flex gap-2 mt-4"><button onclick="toast('Yanıtlama sayfası açıldı','info')" class="px-4 py-2 rounded-lg bg-brand-50 text-brand-600 text-xs font-medium hover:bg-brand-100">Yanıtla</button><button onclick="toast('Arşivlendi','success')" class="px-4 py-2 rounded-lg bg-gray-50 text-gray-600 text-xs font-medium hover:bg-gray-100">Arşivle</button></div></div>
+                    <div class="bg-white rounded-2xl border border-gray-200 p-5"><div class="flex items-start justify-between mb-3"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-sm">AÇ</div><div><p class="font-semibold text-gray-900">Ayşe Çelik</p><p class="text-xs text-gray-500">ayse@email.com · 1 gün önce</p></div></div><span class="px-2.5 py-1 rounded-lg bg-brand-50 text-brand-600 text-xs font-medium">Yeni</span></div><p class="text-sm text-gray-600">Toptan fiyatlandırma hakkında bilgi almak istiyorum.</p><div class="flex gap-2 mt-4"><button onclick="toast('Yanıtlama sayfası açıldı','info')" class="px-4 py-2 rounded-lg bg-brand-50 text-brand-600 text-xs font-medium hover:bg-brand-100">Yanıtla</button><button onclick="toast('Arşivlendi','success')" class="px-4 py-2 rounded-lg bg-gray-50 text-gray-600 text-xs font-medium hover:bg-gray-100">Arşivle</button></div></div>
+                </div>
+            </div>
+
+            <!-- SETTINGS -->
+            <div id="t-settings" class="at hidden">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Site Ayarları</h2>
+                <div class="max-w-2xl space-y-6">
+                    <div class="bg-white rounded-2xl border border-gray-200 p-6">
+                        <h3 class="font-semibold text-gray-900 mb-4">Genel Bilgiler</h3>
+                        <div class="space-y-4">
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">Site Adı</label><input type="text" value="Harikam Süt Ürünleri" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">WhatsApp Numarası</label><input type="text" value="+90 374 123 45 67" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-2">E-posta</label><input type="email" value="info@harikam.com.tr" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm"></div>
+                        </div>
+                        <button onclick="toast('Ayarlar kaydedildi!','success')" class="bp mt-6 px-6 py-2.5 rounded-xl text-white text-sm font-medium">Kaydet</button>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-red-100 p-6">
+                        <h3 class="font-semibold text-red-700 mb-2">⚠️ Tehlikeli Bölge</h3>
+                        <p class="text-sm text-gray-500 mb-4">Bu işlemler geri alınamaz.</p>
+                        <button onclick="if(confirm('Tüm ürünleri silmek istediğinize emin misiniz?')){localStorage.removeItem('hk_products');rAP();toast('Tüm ürünler silindi','error');uS()}" class="px-4 py-2.5 rounded-xl bg-red-50 text-red-600 text-sm font-medium hover:bg-red-100 border border-red-200 flex items-center gap-2"><i data-lucide="trash-2" class="w-4 h-4"></i> Tüm Ürünleri Sil</button>
+                        <button onclick="if(confirm('Tüm siparişleri silmek istediğinize emin misiniz?')){localStorage.removeItem('hk_orders');rAO();toast('Tüm siparişler silindi','error');uS()}" class="ml-3 px-4 py-2.5 rounded-xl bg-red-50 text-red-600 text-sm font-medium hover:bg-red-100 border border-red-200 flex items-center gap-2"><i data-lucide="trash-2" class="w-4 h-4"></i> Tüm Siparişleri Sil</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ÜRÜN MODALI -->
+<div id="pM" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="cPM()"></div>
+    <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto no-scrollbar asd">
+        <div class="p-6 lg:p-8">
+            <div class="flex items-center justify-between mb-6"><h3 class="text-xl font-bold text-gray-900" id="mT">Yeni Ürün Ekle</h3><button onclick="cPM()" class="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center hover:bg-gray-200"><i data-lucide="x" class="w-5 h-5 text-gray-500"></i></button></div>
+            <form onsubmit="sPr(event)">
+                <input type="hidden" id="ePI" value="">
+                <div class="space-y-4">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Ürün Adı *</label><input type="text" id="pN" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="Örn: Süzme Yoğurt"></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Kategori *</label><select id="pC" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700"><option value="yogurt">Yoğurt</option><option value="sut">Süt</option><option value="peynir">Peynir</option><option value="tereyag">Tereyağı</option><option value="kaymak">Kaymak</option></select></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Fiyat (₺) *</label><input type="number" id="pPr" required step="0.01" min="0" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="0.00"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Stok</label><input type="number" id="pSt" min="0" value="100" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm"></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Birim</label><select id="pUn" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700"><option value="adet">Adet</option><option value="kg">Kg</option><option value="litre">Litre</option></select></div>
+                    </div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Görsel URL</label><input type="url" id="pIm" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm" placeholder="https://... (boş bırakırsanız varsayılan)"></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Açıklama</label><textarea id="pDe" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm resize-none" placeholder="Ürün açıklaması..."></textarea></div>
+                    <div><label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="pAc" checked class="w-5 h-5 rounded-lg border-gray-300 text-brand-600 focus:ring-brand-500"><span class="text-sm text-gray-700">Aktif (Sitede göster)</span></label></div>
+                </div>
+                <div class="flex gap-3 mt-6"><button type="button" onclick="cPM()" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50">İptal</button><button type="submit" class="flex-1 bp py-2.5 rounded-xl text-white text-sm font-medium">Kaydet</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- SİLME MODALI -->
+<div id="dM" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="cDM()"></div>
+    <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm asd">
+        <div class="p-6 text-center">
+            <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4"><i data-lucide="alert-triangle" class="w-8 h-8 text-red-600"></i></div>
+            <h3 class="text-lg font-bold text-gray-900">Ürünü Sil</h3>
+            <p class="text-sm text-gray-500 mt-2">Bu işlem geri alınamaz.</p>
+            <div class="flex gap-3 mt-6"><button onclick="cDM()" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50">İptal</button><button onclick="cDel()" class="flex-1 py-2.5 rounded-xl bg-red-600 text-white text-sm font-medium hover:bg-red-700">Sil</button></div>
+        </div>
+    </div>
+</div>
+
+<script>
+const AU='admin',AP_='harikam2026';
+const cL={yogurt:'Yoğurt',sut:'Süt',peynir:'Peynir',tereyag:'Tereyağı',kaymak:'Kaymak'};
+const cC={yogurt:'bg-blue-50 text-blue-600',sut:'bg-green-50 text-green-600',peynir:'bg-yellow-50 text-yellow-700',tereyag:'bg-orange-50 text-orange-600',kaymak:'bg-purple-50 text-purple-600'};
+const DEF_IMGS={yogurt:'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=400&fit=crop',sut:'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&h=400&fit=crop',peynir:'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=400&h=400&fit=crop',tereyag:'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=400&h=400&fit=crop',kaymak:'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=400&fit=crop'};
+
+let dTI=null;
+
+function gP(){let s=localStorage.getItem('hk_products');if(!s){const seed=[{id:1,name:'Süzme Yoğurt',category:'yogurt',price:45,stock:250,unit:'kg',desc:'Geleneksel usul süzme yoğurt.',active:true,img:'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=400&fit=crop'},{id:2,name:'Doğal Yoğurt',category:'yogurt',price:35,stock:400,unit:'kg',desc:'Katkısız doğal yoğurt.',active:true,img:'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&h=400&fit=crop'},{id:3,name:'Meyveli Yoğurt',category:'yogurt',price:55,stock:120,unit:'kg',desc:'Probiyotik meyveli yoğurt.',active:true,img:'https://images.unsplash.com/photo-1571006459739-0c531bfbc982?w=400&h=400&fit=crop'},{id:4,name:'Tam Yağlı Süt',category:'sut',price:25,stock:500,unit:'litre',desc:'Tam yağlı doğal süt.',active:true,img:'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&h=400&fit=crop'},{id:5,name:'Yarım Yağlı Süt',category:'sut',price:22,stock:350,unit:'litre',desc:'Yarım yağlı süt.',active:true,img:'https://images.unsplash.com/photo-1571258729818-3a065c490ffb?w=400&h=400&fit=crop'},{id:6,name:'Keçi Sütü',category:'sut',price:65,stock:80,unit:'litre',desc:'Organik keçi sütü.',active:true,img:'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=400&fit=crop'},{id:7,name:'Beyaz Peynir',category:'peynir',price:120,stock:180,unit:'kg',desc:'Geleneksel beyaz peynir.',active:true,img:'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=400&h=400&fit=crop'},{id:8,name:'Kaşar Peyniri',category:'peynir',price:180,stock:90,unit:'kg',desc:'Doğal kaşar peyniri.',active:true,img:'https://images.unsplash.com/photo-1618164436241-4473940d1f5c?w=400&h=400&fit=crop'},{id:9,name:'Otlu Peynir',category:'peynir',price:200,stock:60,unit:'kg',desc:'Yöresel otlu peynir.',active:true,img:'https://images.unsplash.com/photo-1550294628-0a39a7f33640?w=400&h=400&fit=crop'},{id:10,name:'Süzme Tereyağı',category:'tereyag',price:150,stock:100,unit:'kg',desc:'Geleneksel süzme tereyağı.',active:true,img:'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=400&h=400&fit=crop'},{id:11,name:'Tuzlu Tereyağı',category:'tereyag',price:140,stock:110,unit:'kg',desc:'Tuzlanmış tereyağı.',active:true,img:'https://images.unsplash.com/photo-1528207776546-365bb710ee93?w=400&h=400&fit=crop'},{id:12,name:'Manda Kaymağı',category:'kaymak',price:220,stock:45,unit:'kg',desc:'Yoğun manda kaymağı.',active:true,img:'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=400&fit=crop'},{id:13,name:'Süt Kaymağı',category:'kaymak',price:160,stock:75,unit:'kg',desc:'Hafif süt kaymağı.',active:true,img:'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=400&fit=crop'}];localStorage.setItem('hk_products',JSON.stringify(seed));return seed;}return JSON.parse(s);}
+function sP_(p){localStorage.setItem('hk_products',JSON.stringify(p));}
+function gO(){return JSON.parse(localStorage.getItem('hk_orders')||'[]');}
+
+function doLogin(e){
+    e.preventDefault();
+    if(document.getElementById('lU').value.trim()===AU&&document.getElementById('lP').value===AP_){
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('adminPanel').classList.remove('hidden');
+        document.body.style.overflow='hidden';
+        rAP();rAO();uS();lucide.createIcons();
+    }else{
+        const er=document.getElementById('loginErr');er.classList.remove('hidden');er.classList.add('ashake');setTimeout(()=>er.classList.remove('ashake'),500);lucide.createIcons();
+    }
+}
+function doLogout(){window.location.href='../';}
+
+// Ürünler tablosu
+function rAP(){
+    const p=gP(),s=(document.getElementById('aS')?.value||'').toLowerCase(),f=p.filter(x=>x.name.toLowerCase().includes(s));
+    document.getElementById('aPB').innerHTML=f.map(p=>`<tr class="hover:bg-gray-50"><td class="py-3.5 px-5"><div class="flex items-center gap-3"><img src="${p.img}" class="w-10 h-10 rounded-xl object-cover bg-gray-100" onerror="this.src='${DEF_IMGS[p.category]}'"><span class="font-medium text-gray-900">${p.name}</span></div></td><td class="py-3.5 px-5"><span class="px-2.5 py-1 rounded-lg ${cC[p.category]} text-xs font-medium">${cL[p.category]}</span></td><td class="py-3.5 px-5 font-medium">₺${p.price}</td><td class="py-3.5 px-5 text-gray-600">${p.stock}</td><td class="py-3.5 px-5"><span class="px-2.5 py-1 rounded-lg text-xs font-medium ${p.active?'bg-green-50 text-green-700':'bg-gray-100 text-gray-500'}">${p.active?'Aktif':'Pasif'}</span></td><td class="py-3.5 px-5 text-right"><div class="flex items-center justify-end gap-1"><button onclick="ePr(${p.id})" class="w-8 h-8 rounded-lg hover:bg-blue-50 flex items-center justify-center text-gray-400 hover:text-blue-600"><i data-lucide="pencil" class="w-4 h-4"></i></button><button onclick="dPr(${p.id})" class="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center text-gray-400 hover:text-red-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></td></tr>`).join('');
+    lucide.createIcons();
+}
+
+// Ürün modal
+function oPM(id=null){
+    const m=document.getElementById('pM'),t=document.getElementById('mT');
+    if(id){const p=gP().find(x=>x.id===id);if(!p)return;t.textContent='Ürün Düzenle';document.getElementById('ePI').value=id;document.getElementById('pN').value=p.name;document.getElementById('pC').value=p.category;document.getElementById('pPr').value=p.price;document.getElementById('pSt').value=p.stock;document.getElementById('pUn').value=p.unit;document.getElementById('pIm').value=p.img;document.getElementById('pDe').value=p.desc;document.getElementById('pAc').checked=p.active;}
+    else{t.textContent='Yeni Ürün Ekle';document.getElementById('ePI').value='';['pN','pIm','pDe'].forEach(x=>document.getElementById(x).value='');document.getElementById('pC').value='yogurt';document.getElementById('pPr').value='';document.getElementById('pSt').value=100;document.getElementById('pUn').value='adet';document.getElementById('pAc').checked=true;}
+    m.classList.remove('hidden');lucide.createIcons();
+}
+function cPM(){document.getElementById('pM').classList.add('hidden');}
+function ePr(id){oPM(id);}
+
+function sPr(e){
+    e.preventDefault();const eid=document.getElementById('ePI').value;
+    const d={name:document.getElementById('pN').value,category:document.getElementById('pC').value,price:parseFloat(document.getElementById('pPr').value),stock:parseInt(document.getElementById('pSt').value)||0,unit:document.getElementById('pUn').value,img:document.getElementById('pIm').value||DEF_IMGS[document.getElementById('pC').value],desc:document.getElementById('pDe').value,active:document.getElementById('pAc').checked};
+    let p=gP();
+    if(eid){const i=p.findIndex(x=>x.id==eid);if(i>-1){p[i]={...p[i],...d};toast('Ürün güncellendi!','success');}}
+    else{d.id=p.length?Math.max(...p.map(x=>x.id))+1:1;p.push(d);toast('Yeni ürün eklendi!','success');}
+    sP_(p);cPM();rAP();uS();
+}
+
+function dPr(id){dTI=id;document.getElementById('dM').classList.remove('hidden');lucide.createIcons();}
+function cDM(){document.getElementById('dM').classList.add('hidden');dTI=null;}
+function cDel(){if(dTI!==null){let p=gP().filter(x=>x.id!==dTI);sP_(p);toast('Ürün silindi','error');rAP();uS();}cDM();}
+
+// Siparişler
+function rAO(){
+    const o=gO(),wps='<span class="px-2.5 py-1 rounded-lg bg-green-50 text-green-700 text-xs font-medium flex items-center gap-1 inline-flex"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>WhatsApp</span>';
+    const rows=o.slice().reverse().map(x=>`<tr class="hover:bg-gray-50"><td class="py-3.5 px-5 font-medium">${x.id}</td><td class="py-3.5 px-5 text-gray-600">${x.customer}</td><td class="py-3.5 px-5 text-gray-600">${x.phone}</td><td class="py-3.5 px-5 text-gray-500 text-xs max-w-[180px] truncate" title="${x.address}">${x.address}</td><td class="py-3.5 px-5 text-gray-600">${x.product} x${x.qty}</td><td class="py-3.5 px-5 font-medium">₺${x.total}</td><td class="py-3.5 px-5">${wps}</td></tr>`).join('');
+    document.getElementById('oB').innerHTML=rows||'<tr><td colspan="7" class="py-12 text-center text-gray-400">Henüz sipariş yok</td></tr>';
+    // Dashboard son 5
+    const d5=o.slice(-5).reverse().map(x=>`<tr class="hover:bg-gray-50"><td class="py-3.5 px-5 font-medium">${x.id}</td><td class="py-3.5 px-5 text-gray-600">${x.customer}</td><td class="py-3.5 px-5 text-gray-600">${x.product} x${x.qty}</td><td class="py-3.5 px-5 font-medium">₺${x.total}</td><td class="py-3.5 px-5">${wps}</td></tr>`).join('');
+    document.getElementById('dOB').innerHTML=d5||'<tr><td colspan="5" class="py-12 text-center text-gray-400">Henüz sipariş yok</td></tr>';
+}
+
+// Stats
+function uS(){
+    const p=gP(),o=gO();
+    document.getElementById('sP').textContent=p.length;
+    document.getElementById('sO').textContent=o.length;
+    const total=o.reduce((s,x)=>s+parseFloat(x.total),0);
+    document.getElementById('sR').textContent='₺'+total.toLocaleString('tr-TR',{minimumFractionDigits:0,maximumFractionDigits:0});
+}
+
+// Tab geçiş
+function sT(t){
+    document.querySelectorAll('.at').forEach(x=>x.classList.add('hidden'));
+    document.getElementById('t-'+t).classList.remove('hidden');
+    document.querySelectorAll('.asi').forEach(b=>b.classList.toggle('active',b.dataset.t===t));
+    document.querySelectorAll('.amt').forEach(b=>{const a=b.dataset.t===t;b.classList.toggle('text-brand-600',a);b.classList.toggle('text-gray-400',!a);});
+    if(t==='products')rAP();if(t==='orders')rAO();if(t==='dashboard'){uS();rAO();}
+    lucide.createIcons();
+}
+
+function toast(m,t='info'){const c=document.getElementById('toastC'),cl={success:'bg-green-600',error:'bg-red-600',info:'bg-blue-600'},ic={success:'check-circle',error:'x-circle',info:'info'},d=document.createElement('div');d.className='toast flex items-center gap-3 px-5 py-3.5 rounded-2xl '+cl[t]+' text-white shadow-xl text-sm font-medium min-w-[280px]';d.innerHTML=`<i data-lucide="${ic[t]}" class="w-5 h-5 flex-shrink-0"></i><span>${m}</span>`;c.appendChild(d);lucide.createIcons();setTimeout(()=>{d.style.transition='all .3s';d.style.opacity='0';d.style.transform='translateX(100px)';setTimeout(()=>d.remove(),300);},3000);}
+
+document.addEventListener('DOMContentLoaded',()=>lucide.createIcons());
+</script>
+</body>
+</html>
